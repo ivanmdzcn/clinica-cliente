@@ -14,7 +14,7 @@ RUN npm run build -- --configuration production
 # Etapa 2: Servidor de producción ligero
 FROM nginx:alpine
 
-COPY --from=build /app/dist/client-front/browser /usr/share/nginx/html
+COPY --from=build /app/dist/client/browser /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
