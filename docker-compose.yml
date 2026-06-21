@@ -2,6 +2,7 @@ services:
   client-front:
     build:
       context: .
+      network: host
     image: client-front:latest
     container_name: client_frontend
     restart: unless-stopped
