@@ -1,0 +1,13 @@
+services:
+  client-front:
+    build:
+      context: .
+    image: client-front:latest
+    container_name: client_frontend
+    restart: unless-stopped
+    networks:
+      - mysql_net
+
+networks:
+  mysql_net:
+    external: true

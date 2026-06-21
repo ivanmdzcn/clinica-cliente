@@ -1,0 +1,79 @@
+<div class="tab-content">
+
+    <div class="tab-header-signos">
+        <h3 class="tab-titulo">Diagnósticos de la Consulta</h3>
+        @if (!esCerrada) {
+        <button *appPermiso="'consultas.crear'" mat-raised-button color="primary"
+            (click)="abrirFormDiagnostico()">
+            <mat-icon>add</mat-icon>
+            Agregar Diagnóstico
+        </button>
+        }
+    </div>
+
+    @if (diagnosticos().length === 0) {
+    <div class="sin-datos-signos">
+        <mat-icon>diagnosis</mat-icon>
+        <p>No hay diagnósticos registrados</p>
+    </div>
+    }
+
+    <div class="diagnosticos-lista">
+        @for (diag of diagnosticos(); track diag.idDiagnostico) {
+        <mat-card class="diagnostico-card">
+            <mat-card-content>
+                <div class="diagnostico-content">
+
+                    <div class="diagnostico-info">
+                        @if (obtenerTipoDiagnostico(diag.tipo); as t) {
+                        <div class="chip-tipo-diag" [style.background-color]="t.bg" [style.color]="t.color">
+                            {{ t.label }}
+                        </div>
+                        }
+
+                        @if (diag.codigoCie10) {
+                        <div class="diag-cie10">
+                            <code class="codigo-cie">{{ diag.codigoCie10 }}</code>
+                            <span class="diag-descripcion">{{ diag.descripcion }}</span>
+                        </div>
+                        } @else {
+                        <p class="diag-descripcion libre">
+                            <mat-icon>edit_note</mat-icon>
+                            {{ diag.descripcion }}
+                        </p>
+                        }
+
+                        <div class="diag-meta">
+                            @if (diag.nombreCreadoPor) {
+                            <span>
+                                <mat-icon>person</mat-icon>
+                                {{ diag.nombreCreadoPor }}
+                            </span>
+                            }
+                            <span>
+                                <mat-icon>schedule</mat-icon>
+                                {{ diag.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    @if (!esCerrada) {
+                    <div class="diagnostico-acciones">
+                        <button *appPermiso="'consultas.actualizar'" mat-icon-button color="primary"
+                            matTooltip="Editar" (click)="abrirFormDiagnostico(diag)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button *appPermiso="'consultas.eliminar'" mat-icon-button color="warn"
+                            matTooltip="Eliminar" (click)="confirmarEliminarDiagnostico(diag)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                    }
+
+                </div>
+            </mat-card-content>
+        </mat-card>
+        }
+    </div>
+
+</div>

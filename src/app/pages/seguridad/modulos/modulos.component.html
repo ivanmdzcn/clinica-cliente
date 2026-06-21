@@ -1,0 +1,118 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <mat-icon>apps</mat-icon>
+                Módulos
+            </h1>
+            <p class="page-subtitle">Gestión de módulos del sistema</p>
+        </div>
+        <button
+            *appPermiso="'modulos.crear'"
+            mat-raised-button
+            color="primary"
+            (click)="abrirFormulario()">
+            <mat-icon>add</mat-icon>
+            Nuevo Módulo
+        </button>
+    </div>
+
+    <!-- Tabla -->
+    <mat-card class="table-card">
+        <mat-card-content>
+
+            <!-- Filtro -->
+            <div class="table-toolbar">
+                <mat-form-field appearance="outline" class="filtro-field">
+                    <mat-label>Buscar módulo</mat-label>
+                    <input matInput (keyup)="filtrar($event)" placeholder="Ej: Clínica">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- Tabla -->
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+
+                <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row">
+                        <strong>{{ row.nombre }}</strong>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="activo">
+                    <th mat-header-cell *matHeaderCellDef>Estado</th>
+                    <td mat-cell *matCellDef="let row">
+                        <mat-chip [class]="row.activo ? 'chip-activo' : 'chip-inactivo'">
+                            {{ row.activo ? 'Activo' : 'Inactivo' }}
+                        </mat-chip>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="acciones">
+
+                            <button
+                                *appPermiso="'modulos.actualizar'"
+                                mat-icon-button
+                                color="primary"
+                                matTooltip="Editar"
+                                (click)="editar(row)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+
+                            @if (row.activo) {
+                                <button
+                                    *appPermiso="'modulos.actualizar'"
+                                    mat-icon-button
+                                    color="accent"
+                                    matTooltip="Desactivar"
+                                    (click)="confirmarDesactivar(row)">
+                                    <mat-icon>toggle_on</mat-icon>
+                                </button>
+                            }
+
+                            <button
+                                *appPermiso="'modulos.eliminar'"
+                                mat-icon-button
+                                color="warn"
+                                matTooltip="Eliminar"
+                                (click)="confirmarEliminar(row)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell sin-datos" [attr.colspan]="columnas.length">
+                        <mat-icon>inbox</mat-icon>
+                        <p>No se encontraron módulos</p>
+                    </td>
+                </tr>
+
+            </table>
+
+            <mat-paginator
+                [pageSizeOptions]="[5, 10, 25]"
+                showFirstLastButtons />
+
+        </mat-card-content>
+    </mat-card>
+
+        <!-- --Cargando -->
+        @if (cargando() && dataSource.data.length === 0) {
+        <div class="loader-overlay">
+            <div class="neon-ring"></div>
+        </div>
+        }
+
+</div>

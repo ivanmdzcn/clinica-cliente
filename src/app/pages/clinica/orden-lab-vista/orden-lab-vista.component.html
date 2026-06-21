@@ -1,0 +1,113 @@
+<!-- Barra acciones — se oculta al imprimir -->
+<div class="acciones-imprimir no-print">
+    <button mat-icon-button (click)="volver()" matTooltip="Volver">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" (click)="imprimir()">
+        <mat-icon>print</mat-icon>
+        Imprimir / Guardar PDF
+    </button>
+</div>
+
+@if (cargando()) {
+    <div class="cargando no-print">Cargando orden...</div>
+}
+
+@if (!cargando() && orden()) {
+    <div class="orden-hoja">
+
+        <!-- Encabezado -->
+        <div class="orden-encabezado">
+            <div class="medico-info">
+                <h2 class="medico-nombre">{{ orden()!.nombreMedico }}</h2>
+                <p class="orden-subtitulo">Médico Tratante</p>
+            </div>
+            <div class="orden-numero-bloque">
+                <p class="orden-numero-label">N° de Orden</p>
+                <h3 class="orden-numero">{{ orden()!.numeroOrden }}</h3>
+                @if (orden()!.urgente) {
+                    <div class="urgente-badge">
+                        ⚠ URGENTE
+                    </div>
+                }
+            </div>
+        </div>
+
+        <hr class="separador">
+
+        <!-- Título -->
+        <div class="orden-titulo-row">
+            <h3 class="orden-titulo">ORDEN DE LABORATORIO</h3>
+            <p class="orden-fecha">
+                Fecha: {{ orden()!.fechaOrden | date:'dd/MM/yyyy' }}
+            </p>
+        </div>
+
+        <!-- Datos paciente -->
+        <div class="paciente-seccion">
+            <div class="dato-row">
+                <span class="dato-label">Paciente:</span>
+                <span class="dato-valor dato-subrayado">
+                    {{ orden()!.nombrePaciente }}
+                </span>
+            </div>
+            @if (orden()!.codigoCie10) {
+                <div class="dato-row">
+                    <span class="dato-label">Diagnóstico:</span>
+                    <span class="dato-valor">
+                        {{ orden()!.codigoCie10 }}
+                    </span>
+                </div>
+            }
+        </div>
+
+        <hr class="separador">
+
+        <!-- Exámenes solicitados -->
+        <div class="examenes-seccion">
+            <h4 class="examenes-titulo">EXÁMENES SOLICITADOS</h4>
+
+            <div class="examenes-lista">
+                @for (d of orden()!.detalle; track d.idDetalle; let i = $index) {
+                    <div class="examen-item">
+                        <div class="examen-checkbox">□</div>
+                        <div class="examen-info">
+                            <span class="examen-num">{{ i + 1 }}.</span>
+                            <strong class="examen-nombre">{{ d.nombreExamen }}</strong>
+                            <code class="examen-codigo">{{ d.codigoExamen }}</code>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Observaciones -->
+        @if (orden()!.observaciones) {
+            <hr class="separador">
+            <div class="observaciones-seccion">
+                <p class="obs-label">Observaciones / Instrucciones especiales:</p>
+                <p class="obs-texto">{{ orden()!.observaciones }}</p>
+            </div>
+        }
+
+        <!-- Instrucciones generales -->
+        <hr class="separador">
+        <div class="instrucciones">
+            <p class="inst-titulo">Instrucciones para el paciente:</p>
+            <ul class="inst-lista">
+                <li>Presentar esta orden en el laboratorio.</li>
+                <li>Ayuno de 8-12 horas para exámenes de sangre en ayunas.</li>
+                <li>Esta orden tiene validez de 30 días a partir de la fecha de emisión.</li>
+            </ul>
+        </div>
+
+        <!-- Firma -->
+        <div class="firma-seccion">
+            <div class="firma-linea"></div>
+            <p class="firma-nombre">{{ orden()!.nombreMedico }}</p>
+            <p class="firma-cargo">Médico Solicitante</p>
+        </div>
+
+    </div>
+}

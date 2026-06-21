@@ -1,0 +1,86 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'schedule' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Horario' : 'Nuevo Horario' }}
+    </h2>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Día de la semana *</mat-label>
+                <mat-select formControlName="diaSemana">
+                    @for (d of diasSemana; track d.value) {
+                        <mat-option [value]="d.value">
+                            {{ d.label }}
+                        </mat-option>
+                    }
+                </mat-select>
+                <mat-icon matSuffix>calendar_today</mat-icon>
+                @if (diaSemana.hasError('required') && diaSemana.touched) {
+                    <mat-error>El día es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Duración por cita (min) *</mat-label>
+                <input matInput type="number" formControlName="duracionSlotMin" placeholder="Ej: 30">
+                <mat-icon matSuffix>timer</mat-icon>
+                @if (duracionSlotMin.hasError('required') && duracionSlotMin.touched) {
+                    <mat-error>La duración es obligatoria</mat-error>
+                }
+                @if (duracionSlotMin.hasError('min') && duracionSlotMin.touched) {
+                    <mat-error>Mínimo 5 minutos</mat-error>
+                }
+                @if (duracionSlotMin.hasError('max') && duracionSlotMin.touched) {
+                    <mat-error>Máximo 120 minutos</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Hora de inicio *</mat-label>
+                <input matInput type="time" formControlName="horaInicio">
+                <mat-icon matSuffix>access_time</mat-icon>
+                @if (horaInicio.hasError('required') && horaInicio.touched) {
+                    <mat-error>La hora de inicio es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Hora de fin *</mat-label>
+                <input matInput type="time" formControlName="horaFin">
+                <mat-icon matSuffix>access_time</mat-icon>
+                @if (horaFin.hasError('required') && horaFin.touched) {
+                    <mat-error>La hora de fin es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            @if (modoEdicion) {
+                <div class="toggle-activo">
+                    <mat-slide-toggle formControlName="activo" color="primary">
+                        Horario activo
+                    </mat-slide-toggle>
+                </div>
+            }
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">
+            @if (cargando()) {
+                <mat-spinner diameter="20" />
+            } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

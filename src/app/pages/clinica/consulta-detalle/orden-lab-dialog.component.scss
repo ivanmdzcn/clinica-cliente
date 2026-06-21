@@ -1,0 +1,147 @@
+.dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #1a237e;
+    mat-icon { color: #00897b; }
+}
+
+mat-dialog-content {
+    min-width: 560px;
+    max-height: 75vh;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.urgente-toggle {
+    display: flex;
+    align-items: center;
+
+    .urgente-label {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: #d32f2f;
+        font-weight: 600;
+        mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+    }
+}
+
+.seccion {
+    padding: 0.75rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.seccion-titulo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #3f51b5;
+    margin: 0;
+    mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+}
+
+// Exámenes seleccionados
+.examenes-seleccionados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.examen-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0.75rem;
+    background: #e8f5e9;
+    border-radius: 8px;
+    border-left: 3px solid #388e3c;
+
+    span { flex: 1; font-size: 0.88rem; }
+
+    button { width: 28px; height: 28px; line-height: 28px;
+        mat-icon { font-size: 0.9rem; color: #d32f2f; } }
+}
+
+.codigo-ex {
+    background: #c8e6c9;
+    color: #1b5e20;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+// CIE-10
+.cie10-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: #e8eaf6;
+    border-radius: 8px;
+    border-left: 3px solid #3f51b5;
+
+    span { flex: 1; font-size: 0.88rem; }
+}
+
+.codigo-cie {
+    background: #3f51b5;
+    color: white;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+// Resultados búsqueda
+.resultados-lista {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.resultado-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background 0.15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f5f5f5; }
+}
+
+.resultado-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.1rem;
+    strong { font-size: 0.88rem; }
+    small  { font-size: 0.75rem; color: #888; }
+}
+
+.add-icon {
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+    color: #388e3c;
+}
+
+.w-100 { width: 100%; }

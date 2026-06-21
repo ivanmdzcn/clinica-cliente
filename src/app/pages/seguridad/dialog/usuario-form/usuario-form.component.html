@@ -1,0 +1,109 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'person_add' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Usuario' : 'Nuevo Usuario' }}
+    </h2>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <!-- Nombre -->
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre completo</mat-label>
+                <input matInput formControlName="nombre" placeholder="Ej: Juan Pérez">
+                <mat-icon matSuffix>person</mat-icon>
+                @if (nombre.hasError('required') && nombre.touched) {
+                    <mat-error>El nombre es obligatorio</mat-error>
+                }
+                @if (nombre.hasError('maxlength') && nombre.touched) {
+                    <mat-error>Máximo 100 caracteres</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Nombre usuario -->
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre de usuario</mat-label>
+                <input matInput formControlName="nombreUsuario" placeholder="Ej: jperez">
+                <mat-icon matSuffix>badge</mat-icon>
+                @if (nombreUsuario.hasError('required') && nombreUsuario.touched) {
+                    <mat-error>El nombre de usuario es obligatorio</mat-error>
+                }
+                @if (nombreUsuario.hasError('maxlength') && nombreUsuario.touched) {
+                    <mat-error>Máximo 80 caracteres</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Email -->
+            <mat-form-field appearance="outline">
+                <mat-label>Correo electrónico</mat-label>
+                <input matInput formControlName="email" placeholder="Ej: juan@correo.com">
+                <mat-icon matSuffix>email</mat-icon>
+                @if (email.hasError('required') && email.touched) {
+                    <mat-error>El email es obligatorio</mat-error>
+                }
+                @if (email.hasError('email') && email.touched) {
+                    <mat-error>Ingresa un email válido</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Rol -->
+            <mat-form-field appearance="outline">
+                <mat-label>Rol</mat-label>
+                <mat-select formControlName="idRol">
+                    <mat-option [value]="null">Sin rol</mat-option>
+                    @for (rol of roles(); track rol.idRol) {
+                        <mat-option [value]="rol.idRol">
+                            {{ rol.nombre }}
+                        </mat-option>
+                    }
+                </mat-select>
+                <mat-icon matSuffix>shield</mat-icon>
+            </mat-form-field>
+
+            <!-- Contraseña — solo al crear -->
+            @if (!modoEdicion) {
+                <mat-form-field appearance="outline" class="col-span-2">
+                    <mat-label>Contraseña</mat-label>
+                    <input
+                        matInput
+                        [type]="mostrarContrasena() ? 'text' : 'password'"
+                        formControlName="contrasena">
+                    <button
+                        mat-icon-button
+                        matSuffix
+                        type="button"
+                        (click)="toggleContrasena()">
+                        <mat-icon>
+                            {{ mostrarContrasena() ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+                    </button>
+                    @if (contrasena.hasError('required') && contrasena.touched) {
+                        <mat-error>La contraseña es obligatoria</mat-error>
+                    }
+                    @if (contrasena.hasError('minlength') && contrasena.touched) {
+                        <mat-error>Mínimo 8 caracteres</mat-error>
+                    }
+                </mat-form-field>
+            }
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">
+            @if (cargando()) {
+                <mat-spinner diameter="20" />
+            } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

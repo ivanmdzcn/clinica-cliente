@@ -1,0 +1,74 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>edit</mat-icon>
+    Editar Consulta
+</h2>
+
+<mat-dialog-content>
+    <p class="dialog-subtitle">
+        {{ data.consulta.nombrePaciente }}
+        — {{ data.consulta.nombreMedico }}
+        | {{ data.consulta.fechaConsulta | date:'dd/MM/yyyy HH:mm' }}
+    </p>
+
+    <form [formGroup]="form" class="form-grid">
+
+        <mat-form-field appearance="outline">
+            <mat-label>Tipo de Consulta</mat-label>
+            <mat-select formControlName="tipoConsulta">
+                <mat-option [value]="null">Sin especificar</mat-option>
+                @for (t of tiposConsulta; track t.value) {
+                    <mat-option [value]="t.value">{{ t.label }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Estado</mat-label>
+            <mat-select formControlName="estado">
+                @for (e of estadosConsulta; track e.value) {
+                    <mat-option [value]="e.value">{{ e.label }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-2">
+            <mat-label>Motivo de Consulta *</mat-label>
+            <textarea matInput formControlName="motivoConsulta" rows="3"></textarea>
+            @if (form.get('motivoConsulta')!.hasError('required')
+              && form.get('motivoConsulta')!.touched) {
+                <mat-error>El motivo es obligatorio</mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-2">
+            <mat-label>Evolución y Tratamiento</mat-label>
+            <textarea matInput formControlName="evolucionTratamiento" rows="3"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-span-2">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput formControlName="observaciones" rows="2"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Próxima Cita</mat-label>
+            <input matInput
+                   [matDatepicker]="picker"
+                   formControlName="proximaCita"
+                   [min]="minFecha">
+            <mat-datepicker-toggle matSuffix [for]="picker" />
+            <mat-datepicker #picker />
+        </mat-form-field>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button color="primary"
+            [disabled]="guardando"
+            (click)="guardar()">
+        <mat-icon>save</mat-icon>
+        Actualizar
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,121 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>monitor_heart</mat-icon>
+    {{ modoEdicion ? 'Editar' : 'Nuevo Registro' }} — Signos Vitales
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form">
+
+        <!-- Presión Arterial -->
+        <div class="seccion">
+            <h4 class="seccion-titulo">
+                <mat-icon>favorite</mat-icon>
+                Presión Arterial
+            </h4>
+            <div class="seccion-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Sistólica (mmHg)</mat-label>
+                    <input matInput type="number" formControlName="presionSistolica"
+                           placeholder="120" min="50" max="300">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Diastólica (mmHg)</mat-label>
+                    <input matInput type="number" formControlName="presionDiastolica"
+                           placeholder="80" min="30" max="200">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <mat-divider />
+
+        <!-- Temperatura y Frecuencias -->
+        <div class="seccion">
+            <h4 class="seccion-titulo">
+                <mat-icon>thermostat</mat-icon>
+                Temperatura y Frecuencias
+            </h4>
+            <div class="seccion-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Temperatura (°C)</mat-label>
+                    <input matInput type="number" step="0.1"
+                           formControlName="temperatura"
+                           placeholder="36.5" min="30" max="45">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Frec. Cardíaca (lpm)</mat-label>
+                    <input matInput type="number" formControlName="frecuenciaCardiaca"
+                           placeholder="80" min="20" max="300">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Frec. Respiratoria (rpm)</mat-label>
+                    <input matInput type="number" formControlName="frecuenciaRespiratoria"
+                           placeholder="16" min="5" max="60">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Saturación O₂ (%)</mat-label>
+                    <input matInput type="number" formControlName="saturacionOxigeno"
+                           placeholder="98" min="50" max="100">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <mat-divider />
+
+        <!-- Antropometría y Glucosa -->
+        <div class="seccion">
+            <h4 class="seccion-titulo">
+                <mat-icon>monitor_weight</mat-icon>
+                Antropometría y Glucosa
+            </h4>
+            <div class="seccion-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Peso (kg)</mat-label>
+                    <input matInput type="number" step="0.1"
+                           formControlName="peso"
+                           placeholder="70.5" min="0.5" max="500">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Altura (m)</mat-label>
+                    <input matInput type="number" step="0.01"
+                           formControlName="altura"
+                           placeholder="1.70" min="0.3" max="2.5">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Glucosa Capilar (mg/dL)</mat-label>
+                    <input matInput type="number" formControlName="glucosaCapilar"
+                           placeholder="100" min="10" max="1000">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Nivel de Dolor (0-10)</mat-label>
+                    <mat-select formControlName="nivelDolor">
+                        <mat-option [value]="null">No evaluado</mat-option>
+                        @for (n of nivelesDolorOpts; track n.value) {
+                            <mat-option [value]="n.value">{{ n.label }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <mat-divider />
+
+        <!-- Observaciones -->
+        <div class="seccion">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Observaciones</mat-label>
+                <textarea matInput formControlName="observaciones" rows="2"></textarea>
+            </mat-form-field>
+        </div>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button color="primary"
+            [disabled]="guardando"
+            (click)="guardar()">
+        <mat-icon>save</mat-icon>
+        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+    </button>
+</mat-dialog-actions>

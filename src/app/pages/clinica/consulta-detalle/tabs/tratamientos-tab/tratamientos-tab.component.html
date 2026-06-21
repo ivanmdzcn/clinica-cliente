@@ -1,0 +1,112 @@
+<div class="tab-content">
+
+    <div class="tab-header-signos">
+        <h3 class="tab-titulo">Tratamientos Indicados</h3>
+        @if (!esCerrada) {
+        <button *appPermiso="'consultas.crear'" mat-raised-button color="primary"
+            (click)="abrirFormTratamiento()">
+            <mat-icon>add</mat-icon>
+            Agregar Tratamiento
+        </button>
+        }
+    </div>
+
+    @if (tratamientos().length === 0) {
+    <div class="sin-datos-signos">
+        <mat-icon>healing</mat-icon>
+        <p>No hay tratamientos registrados</p>
+    </div>
+    }
+
+    <div class="tratamientos-lista">
+        @for (trat of tratamientos(); track trat.idTratamiento) {
+        <mat-card class="tratamiento-card" [class.suspendido]="trat.estado === 'suspendido'"
+            [class.completado]="trat.estado === 'completado'">
+            <mat-card-content>
+
+                <div class="tratamiento-content">
+                    <div class="tratamiento-info">
+
+                        <div class="tratamiento-chips">
+                            @if (obtenerTipoTratamiento(trat.tipo); as tp) {
+                            <div class="chip-tipo-trat" [style.background-color]="tp.bg"
+                                [style.color]="tp.color">
+                                {{ tp.label }}
+                            </div>
+                            }
+                            @if (obtenerEstadoTratamiento(trat.estado); as es) {
+                            <div class="chip-estado-trat" [style.background-color]="es.bg"
+                                [style.color]="es.color">
+                                {{ es.label }}
+                            </div>
+                            }
+                        </div>
+
+                        <p class="trat-descripcion">{{ trat.descripcion }}</p>
+
+                        @if (trat.indicaciones) {
+                        <p class="trat-indicaciones">
+                            <mat-icon>info</mat-icon>
+                            {{ trat.indicaciones }}
+                        </p>
+                        }
+
+                        @if (trat.fechaInicio || trat.fechaFin) {
+                        <div class="trat-fechas">
+                            @if (trat.fechaInicio) {
+                            <span>
+                                <mat-icon>calendar_today</mat-icon>
+                                Inicio: {{ trat.fechaInicio | date:'dd/MM/yyyy' }}
+                            </span>
+                            }
+                            @if (trat.fechaFin) {
+                            <span>
+                                <mat-icon>event</mat-icon>
+                                Fin: {{ trat.fechaFin | date:'dd/MM/yyyy' }}
+                            </span>
+                            }
+                        </div>
+                        }
+
+                        @if (trat.motivoSuspension) {
+                        <p class="trat-suspension">
+                            <mat-icon>warning</mat-icon>
+                            Suspendido: {{ trat.motivoSuspension }}
+                        </p>
+                        }
+
+                        <div class="trat-meta">
+                            @if (trat.nombreCreadoPor) {
+                            <span>
+                                <mat-icon>person</mat-icon>
+                                {{ trat.nombreCreadoPor }}
+                            </span>
+                            }
+                            <span>
+                                <mat-icon>schedule</mat-icon>
+                                {{ trat.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    @if (!esCerrada && trat.estado === 'activo') {
+                    <div class="tratamiento-acciones">
+                        <button *appPermiso="'consultas.actualizar'" mat-icon-button color="primary"
+                            matTooltip="Editar" (click)="abrirFormTratamiento(trat)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button *appPermiso="'consultas.eliminar'" mat-icon-button color="warn"
+                            matTooltip="Eliminar" (click)="confirmarEliminarTratamiento(trat)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                    }
+
+                </div>
+            </mat-card-content>
+        </mat-card>
+        }
+    </div>
+
+</div>

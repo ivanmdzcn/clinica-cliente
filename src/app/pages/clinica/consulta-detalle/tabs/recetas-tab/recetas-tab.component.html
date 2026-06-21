@@ -1,0 +1,110 @@
+<div class="tab-content">
+
+    <div class="tab-header-signos">
+        <h3 class="tab-titulo">Recetas Médicas</h3>
+        @if (!esCerrada) {
+        <button *appPermiso="'consultas.crear'" mat-raised-button color="primary"
+            (click)="abrirFormReceta()">
+            <mat-icon>add</mat-icon>
+            Nueva Receta
+        </button>
+        }
+    </div>
+
+    @if (recetas().length === 0) {
+    <div class="sin-datos-signos">
+        <mat-icon>receipt_long</mat-icon>
+        <p>No hay recetas emitidas</p>
+    </div>
+    }
+
+    @for (receta of recetas(); track receta.idReceta) {
+    <mat-card class="receta-card">
+        <mat-card-content>
+
+            <div class="receta-header">
+                <div class="receta-info-head">
+                    <mat-icon class="receta-icon">receipt_long</mat-icon>
+                    <div>
+                        <strong>Receta #{{ receta.idReceta }}</strong>
+                        <span class="receta-fecha">
+                            {{ receta.fechaEmision | date:'dd/MM/yyyy' }}
+                        </span>
+                    </div>
+                    <span class="receta-medico">
+                        <mat-icon>medical_services</mat-icon>
+                        {{ receta.nombreMedico }}
+                    </span>
+                </div>
+                <div class="receta-acciones">
+                    <button mat-icon-button color="primary" matTooltip="Ver / Imprimir"
+                        (click)="verReceta(receta.idReceta)">
+                        <mat-icon>print</mat-icon>
+                    </button>
+                    @if (!esCerrada) {
+                    <button *appPermiso="'consultas.eliminar'" mat-icon-button color="warn"
+                        matTooltip="Eliminar receta" (click)="confirmarEliminarReceta(receta)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <mat-divider />
+
+            <div class="receta-detalle">
+                @for (item of receta.detalle; track item.idDetalle) {
+                <div class="detalle-item">
+                    <div class="detalle-num">{{ item.orden }}</div>
+                    <div class="detalle-info">
+                        <strong class="med-nombre">
+                            {{ item.nombreMedicamento }}
+                        </strong>
+                        @if (item.concentracion || item.presentacion) {
+                        <span class="med-meta">
+                            {{ item.concentracion }}
+                            @if (item.concentracion && item.presentacion) { — }
+                            {{ item.presentacion }}
+                        </span>
+                        }
+                        <div class="posologia">
+                            <span>
+                                <mat-icon>colorize</mat-icon>
+                                {{ item.dosis }}
+                            </span>
+                            <span>
+                                <mat-icon>schedule</mat-icon>
+                                {{ item.frecuencia }}
+                            </span>
+                            <span>
+                                <mat-icon>event</mat-icon>
+                                {{ item.duracion }}
+                            </span>
+                        </div>
+                        @if (item.indicaciones) {
+                        <p class="indicaciones">
+                            <mat-icon>info</mat-icon>
+                            {{ item.indicaciones }}
+                        </p>
+                        }
+                    </div>
+                </div>
+
+                @if (!$last) {
+                <mat-divider />
+                }
+                }
+            </div>
+
+            @if (receta.observaciones) {
+            <div class="receta-obs">
+                <mat-icon>notes</mat-icon>
+                <span>{{ receta.observaciones }}</span>
+            </div>
+            }
+
+        </mat-card-content>
+    </mat-card>
+    }
+
+</div>

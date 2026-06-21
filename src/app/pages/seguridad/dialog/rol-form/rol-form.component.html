@@ -1,0 +1,55 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'add_moderator' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Rol' : 'Nuevo Rol' }}
+    </h2>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre del rol</mat-label>
+                <input matInput formControlName="nombre" placeholder="Ej: Enfermera">
+                <mat-icon matSuffix>shield</mat-icon>
+                @if (nombre.hasError('required') && nombre.touched) {
+                    <mat-error>El nombre es obligatorio</mat-error>
+                }
+                @if (nombre.hasError('maxlength') && nombre.touched) {
+                    <mat-error>Máximo 80 caracteres</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Descripción</mat-label>
+                <textarea
+                    matInput
+                    formControlName="descripcion"
+                    rows="3"
+                    placeholder="Descripción del rol...">
+                </textarea>
+                @if (descripcion.hasError('maxlength') && descripcion.touched) {
+                    <mat-error>Máximo 255 caracteres</mat-error>
+                }
+            </mat-form-field>
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">
+            @if (cargando()) {
+                <mat-spinner diameter="20" />
+            } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

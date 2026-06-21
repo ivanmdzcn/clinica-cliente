@@ -1,0 +1,48 @@
+<mat-toolbar color="primary" class="navbar">
+
+    <!-- Toggle sidebar -->
+    <button mat-icon-button (click)="onToggleSidebar()">
+        <mat-icon>menu</mat-icon>
+    </button>
+
+    <!-- Título -->
+    <span class="navbar-title">{{ nombreEmpresa() || 'Mi Empresa' }}</span>
+
+    <span class="spacer"></span>
+
+    <!-- Menú usuario -->
+    <button mat-button [matMenuTriggerFor]="menuUsuario" class="usuario-btn">
+        <mat-icon>account_circle</mat-icon>
+        <span class="usuario-nombre">{{ authService.usuario() }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+
+    <mat-menu #menuUsuario="matMenu" xPosition="before">
+        <div class="menu-header">
+            <mat-icon>account_circle</mat-icon>
+            <div>
+                <p class="menu-nombre">{{ authService.usuario() }}</p>
+            </div>
+        </div>
+
+        <mat-divider />
+
+        <button mat-menu-item (click)="irAPerfil()">
+            <mat-icon>person</mat-icon>
+            Mi Perfil
+        </button>
+
+        <button mat-menu-item (click)="irACambiarContrasena()">
+            <mat-icon>lock</mat-icon>
+            Cambiar Contraseña
+        </button>
+
+        <mat-divider />
+
+        <button mat-menu-item (click)="logout()" class="logout-btn">
+            <mat-icon>logout</mat-icon>
+            Cerrar Sesión
+        </button>
+    </mat-menu>
+
+</mat-toolbar>

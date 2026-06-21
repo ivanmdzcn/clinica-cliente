@@ -1,0 +1,165 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'person_add' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Paciente' : 'Nuevo Paciente' }}
+    </h2>
+
+    <mat-dialog-content>
+
+        @if (cargandoDatos()) {
+        <div class="cargando-datos">
+            <mat-spinner diameter="32" />
+            <p>Cargando datos del paciente...</p>
+        </div>
+        } @else {
+        <mat-tab-group animationDuration="150ms">
+
+            <!-- TAB 1: Datos Personales -->
+            <mat-tab label="Datos Personales">
+                <div class="form-grid tab-content">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nombres *</mat-label>
+                        <input matInput formControlName="nombres">
+                        @if (nombres.hasError('required') && nombres.touched) {
+                        <mat-error>Los nombres son obligatorios</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Apellidos *</mat-label>
+                        <input matInput formControlName="apellidos">
+                        @if (apellidos.hasError('required') && apellidos.touched) {
+                        <mat-error>Los apellidos son obligatorios</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>DPI</mat-label>
+                        <input matInput formControlName="dpi" placeholder="0000 00000 0000">
+                        <mat-icon matSuffix>badge</mat-icon>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fecha de Nacimiento *</mat-label>
+                        <input matInput [matDatepicker]="picker" formControlName="fechaNacimiento"
+                            [max]="maxFecha">
+                        <mat-datepicker-toggle matSuffix [for]="picker" />
+                        <mat-datepicker #picker />
+                        @if (fechaNacimiento.hasError('required') && fechaNacimiento.touched) {
+                        <mat-error>La fecha de nacimiento es obligatoria</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Sexo *</mat-label>
+                        <mat-select formControlName="sexo">
+                            @for (s of sexos; track s.value) {
+                            <mat-option [value]="s.value">{{ s.label }}</mat-option>
+                            }
+                        </mat-select>
+                        @if (sexo.hasError('required') && sexo.touched) {
+                        <mat-error>El sexo es obligatorio</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Estado Civil</mat-label>
+                        <mat-select formControlName="estadoCivil">
+                            <mat-option [value]="null">Sin especificar</mat-option>
+                            @for (e of estadosCiviles; track e.value) {
+                            <mat-option [value]="e.value">{{ e.label }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Tipo de Sangre</mat-label>
+                        <mat-select formControlName="tipoSangre">
+                            <mat-option [value]="null">Desconocido</mat-option>
+                            @for (t of tiposSangre; track t) {
+                            <mat-option [value]="t">{{ t }}</mat-option>
+                            }
+                        </mat-select>
+                        <mat-icon matSuffix>bloodtype</mat-icon>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Ocupación</mat-label>
+                        <input matInput formControlName="ocupacion">
+                        <mat-icon matSuffix>work</mat-icon>
+                    </mat-form-field>
+
+                </div>
+            </mat-tab>
+
+            <!-- TAB 2: Contacto -->
+            <mat-tab label="Contacto">
+                <div class="form-grid tab-content">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Teléfono</mat-label>
+                        <input matInput formControlName="telefono">
+                        <mat-icon matSuffix>phone</mat-icon>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput formControlName="email" type="email">
+                        <mat-icon matSuffix>email</mat-icon>
+                        @if (email.hasError('email') && email.touched) {
+                        <mat-error>Email inválido</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="col-span-2">
+                        <mat-label>Dirección</mat-label>
+                        <textarea matInput formControlName="direccion" rows="3"></textarea>
+                        <mat-icon matSuffix>home</mat-icon>
+                    </mat-form-field>
+
+                </div>
+            </mat-tab>
+
+            <!-- TAB 3: Emergencia -->
+            <mat-tab label="Contacto de Emergencia">
+                <div class="form-grid tab-content">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Nombre de Contacto</mat-label>
+                        <input matInput formControlName="nombreEmergencia">
+                        <mat-icon matSuffix>person</mat-icon>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Teléfono de Emergencia</mat-label>
+                        <input matInput formControlName="telefonoEmergencia">
+                        <mat-icon matSuffix>emergency</mat-icon>
+                    </mat-form-field>
+
+                </div>
+            </mat-tab>
+
+        </mat-tab-group>
+        }
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando() || cargandoDatos()">
+            @if (cargando()) {
+            <mat-spinner diameter="20" />
+            } @else {
+            <ng-container>
+                <mat-icon>save</mat-icon>
+                {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+            </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

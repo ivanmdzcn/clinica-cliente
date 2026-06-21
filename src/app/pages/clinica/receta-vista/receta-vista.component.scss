@@ -1,0 +1,232 @@
+// Acciones (no se imprimen)
+.acciones-imprimir {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+
+    .spacer { flex: 1; }
+}
+
+.cargando {
+    text-align: center;
+    padding: 3rem;
+    color: #777;
+}
+
+// Hoja de receta
+.receta-hoja {
+    width: 21cm;
+    min-height: 27cm;
+    margin: 1.5rem auto;
+    padding: 2cm 2.5cm;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    font-family: 'Times New Roman', serif;
+    font-size: 12pt;
+    color: #111;
+}
+
+// Encabezado médico
+.receta-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.medico-info {
+    .medico-nombre {
+        font-size: 16pt;
+        font-weight: 700;
+        margin: 0 0 0.25rem;
+        color: #1a237e;
+    }
+
+    .medico-dato {
+        font-size: 10pt;
+        color: #444;
+        margin: 0.1rem 0;
+    }
+}
+
+.sello-medico {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: contain;
+}
+
+// Separadores
+.separador {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 0.75rem 0;
+}
+
+// Título
+.receta-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 0;
+
+    h3 {
+        font-size: 13pt;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .receta-fecha {
+        font-size: 10pt;
+        color: #444;
+        margin: 0;
+    }
+}
+
+// Datos paciente
+.paciente-datos {
+    margin: 0.5rem 0;
+
+    .dato-row {
+        display: flex;
+        gap: 0.5rem;
+        margin: 0.2rem 0;
+        font-size: 11pt;
+
+        .dato-label {
+            font-weight: 700;
+            min-width: 80px;
+        }
+
+        .dato-valor { color: #222; }
+    }
+}
+
+// Rx
+.rx-header {
+    margin: 0.5rem 0 1rem;
+
+    .rx-symbol {
+        font-size: 28pt;
+        font-weight: 700;
+        font-style: italic;
+        color: #1a237e;
+    }
+}
+
+// Medicamentos
+.medicamentos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.medicamento-receta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.med-linea-1 {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+
+    .med-numero {
+        font-size: 11pt;
+        font-weight: 700;
+        color: #555;
+    }
+
+    .med-nombre { font-size: 12pt; font-weight: 700; }
+
+    .med-concentracion {
+        font-size: 11pt;
+        color: #1a237e;
+        font-weight: 600;
+    }
+
+    .med-presentacion { font-size: 10pt; color: #555; }
+}
+
+.med-posologia {
+    font-size: 10.5pt;
+    color: #333;
+    padding-left: 1.2rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+
+    .sep { color: #bbb; }
+}
+
+.med-indicaciones {
+    font-size: 10pt;
+    color: #555;
+    font-style: italic;
+    padding-left: 1.2rem;
+    margin: 0;
+}
+
+// Observaciones
+.observaciones {
+    font-size: 10.5pt;
+    color: #333;
+}
+
+// Firma
+.firma-seccion {
+    margin-top: 3rem;
+    text-align: center;
+    float: right;
+    width: 200px;
+
+    .firma-imagen {
+        max-width: 180px;
+        max-height: 80px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .firma-linea {
+        border-top: 1px solid #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .firma-nombre {
+        font-size: 11pt;
+        font-weight: 700;
+        margin: 0.2rem 0 0;
+    }
+
+    .firma-colegiado {
+        font-size: 9.5pt;
+        color: #555;
+        margin: 0;
+    }
+}
+
+// ── Estilos de impresión ──────────────────────────────────────────────────────
+@media print {
+    .no-print { display: none !important; }
+
+    body { margin: 0; background: white; }
+
+    .receta-hoja {
+        margin: 0;
+        padding: 1.5cm 2cm;
+        box-shadow: none;
+        width: 100%;
+        min-height: auto;
+    }
+
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+}

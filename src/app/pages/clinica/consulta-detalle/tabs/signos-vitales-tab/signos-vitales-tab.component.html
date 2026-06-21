@@ -1,0 +1,146 @@
+<div class="tab-content">
+
+    <div class="tab-header-signos">
+        <h3 class="tab-titulo">Registro de Signos Vitales</h3>
+        @if (!esCerrada) {
+        <button *appPermiso="'consultas.crear'" mat-raised-button color="primary"
+            (click)="abrirFormSignos()">
+            <mat-icon>add</mat-icon>
+            Registrar Signos
+        </button>
+        }
+    </div>
+
+    @if (signosVitales().length === 0) {
+    <div class="sin-datos-signos">
+        <mat-icon>monitor_heart</mat-icon>
+        <p>No hay signos vitales registrados</p>
+    </div>
+    }
+
+    @for (signos of signosVitales(); track signos.idSignos) {
+    <mat-card class="signos-card">
+        <mat-card-content>
+
+            <div class="signos-card-header">
+                <div class="signos-fecha">
+                    <mat-icon>schedule</mat-icon>
+                    <strong>{{ signos.fechaRegistro | date:'dd/MM/yyyy HH:mm' }}</strong>
+                    @if (signos.nombreTomadoPor) {
+                    <span class="tomado-por">por {{ signos.nombreTomadoPor }}</span>
+                    }
+                </div>
+                @if (!esCerrada) {
+                <div class="signos-acciones">
+                    <button *appPermiso="'consultas.actualizar'" mat-icon-button color="primary"
+                        matTooltip="Editar" (click)="editarSignos(signos)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button *appPermiso="'consultas.eliminar'" mat-icon-button color="warn"
+                        matTooltip="Eliminar" (click)="confirmarEliminarSignos(signos)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+                }
+            </div>
+
+            <div class="signos-metricas">
+
+                @if (signos.presionSistolica && signos.presionDiastolica) {
+                <div class="metrica-item" [style.border-color]="colorPresion(signos.presionSistolica)">
+                    <mat-icon [style.color]="colorPresion(signos.presionSistolica)">
+                        favorite
+                    </mat-icon>
+                    <div class="metrica-valor" [style.color]="colorPresion(signos.presionSistolica)">
+                        {{ signos.presionSistolica }}/{{ signos.presionDiastolica }}
+                    </div>
+                    <div class="metrica-label">mmHg</div>
+                </div>
+                }
+
+                @if (signos.temperatura) {
+                <div class="metrica-item">
+                    <mat-icon>thermostat</mat-icon>
+                    <div class="metrica-valor">{{ signos.temperatura }}°</div>
+                    <div class="metrica-label">Temp. °C</div>
+                </div>
+                }
+
+                @if (signos.frecuenciaCardiaca) {
+                <div class="metrica-item">
+                    <mat-icon>monitor_heart</mat-icon>
+                    <div class="metrica-valor">{{ signos.frecuenciaCardiaca }}</div>
+                    <div class="metrica-label">lpm</div>
+                </div>
+                }
+
+                @if (signos.frecuenciaRespiratoria) {
+                <div class="metrica-item">
+                    <mat-icon>air</mat-icon>
+                    <div class="metrica-valor">{{ signos.frecuenciaRespiratoria }}</div>
+                    <div class="metrica-label">rpm</div>
+                </div>
+                }
+
+                @if (signos.saturacionOxigeno) {
+                <div class="metrica-item" [style.border-color]="colorSaturacion(signos.saturacionOxigeno)">
+                    <mat-icon [style.color]="colorSaturacion(signos.saturacionOxigeno)">
+                        water_drop
+                    </mat-icon>
+                    <div class="metrica-valor" [style.color]="colorSaturacion(signos.saturacionOxigeno)">
+                        {{ signos.saturacionOxigeno }}%
+                    </div>
+                    <div class="metrica-label">SpO₂</div>
+                </div>
+                }
+
+                @if (signos.peso && signos.altura) {
+                <div class="metrica-item" [style.border-color]="colorImc(signos.peso, signos.altura)">
+                    <mat-icon [style.color]="colorImc(signos.peso, signos.altura)">
+                        monitor_weight
+                    </mat-icon>
+                    <div class="metrica-valor" [style.color]="colorImc(signos.peso, signos.altura)">
+                        {{ calcularImc(signos.peso, signos.altura) }}
+                    </div>
+                    <div class="metrica-label">IMC</div>
+                </div>
+                }
+
+                @if (signos.peso && !signos.altura) {
+                <div class="metrica-item">
+                    <mat-icon>monitor_weight</mat-icon>
+                    <div class="metrica-valor">{{ signos.peso }}</div>
+                    <div class="metrica-label">kg</div>
+                </div>
+                }
+
+                @if (signos.glucosaCapilar) {
+                <div class="metrica-item">
+                    <mat-icon>bloodtype</mat-icon>
+                    <div class="metrica-valor">{{ signos.glucosaCapilar }}</div>
+                    <div class="metrica-label">mg/dL</div>
+                </div>
+                }
+
+                @if (signos.nivelDolor !== null && signos.nivelDolor !== undefined) {
+                <div class="metrica-item dolor-item">
+                    <mat-icon>sentiment_very_dissatisfied</mat-icon>
+                    <div class="metrica-valor">{{ signos.nivelDolor }}/10</div>
+                    <div class="metrica-label">Dolor</div>
+                </div>
+                }
+
+            </div>
+
+            @if (signos.observaciones) {
+            <p class="signos-obs">
+                <mat-icon>notes</mat-icon>
+                {{ signos.observaciones }}
+            </p>
+            }
+
+        </mat-card-content>
+    </mat-card>
+    }
+
+</div>

@@ -1,0 +1,94 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'medication' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Medicamento' : 'Nuevo Medicamento' }}
+    </h2>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre Genérico *</mat-label>
+                <input matInput formControlName="nombre" placeholder="Ej: Amoxicilina">
+                <mat-icon matSuffix>medication</mat-icon>
+                @if (form.get('nombre')!.hasError('required')
+                  && form.get('nombre')!.touched) {
+                    <mat-error>El nombre es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre Comercial</mat-label>
+                <input matInput formControlName="nombreComercial" placeholder="Ej: Amoxil">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Concentración</mat-label>
+                <input matInput formControlName="concentracion" placeholder="Ej: 500mg">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Presentación</mat-label>
+                <input matInput formControlName="presentacion" placeholder="Ej: Cápsulas, Jarabe, Inyectable">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Laboratorio</mat-label>
+                <input matInput formControlName="laboratorio" placeholder="Ej: Pfizer">
+                <mat-icon matSuffix>science</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Código de Barras</mat-label>
+                <input matInput formControlName="codigoBarras">
+                <mat-icon matSuffix>qr_code</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo de Medicamento *</mat-label>
+                <mat-select formControlName="tipoMedicamento">
+                    @for (t of tiposMedicamento; track t.value) {
+                        <mat-option [value]="t.value">{{ t.label }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <div class="toggle-group">
+                <mat-slide-toggle formControlName="requiereReceta" color="primary">
+                    Requiere Receta Médica
+                </mat-slide-toggle>
+                @if (modoEdicion) {
+                    <mat-slide-toggle formControlName="activo" color="primary">
+                        Activo
+                    </mat-slide-toggle>
+                }
+            </div>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Descripción</mat-label>
+                <textarea matInput formControlName="descripcion" rows="2"
+                          placeholder="Información adicional del medicamento...">
+                </textarea>
+            </mat-form-field>
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="guardando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="guardando()">
+            @if (guardando()) {
+                <mat-spinner diameter="20" />
+            } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

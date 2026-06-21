@@ -1,0 +1,279 @@
+// Barra acciones
+.acciones-imprimir {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    .spacer { flex: 1; }
+}
+
+.cargando {
+    text-align: center;
+    padding: 3rem;
+    color: #777;
+}
+
+// Hoja orden
+.orden-hoja {
+    width: 21cm;
+    min-height: 27cm;
+    margin: 1.5rem auto;
+    padding: 2cm 2.5cm;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    font-family: 'Arial', sans-serif;
+    font-size: 11pt;
+    color: #111;
+}
+
+// Encabezado
+.orden-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.5rem;
+}
+
+.medico-info {
+    .medico-nombre {
+        font-size: 15pt;
+        font-weight: 700;
+        margin: 0 0 0.2rem;
+        color: #1a237e;
+    }
+    .orden-subtitulo {
+        font-size: 9pt;
+        color: #666;
+        margin: 0;
+    }
+}
+
+.orden-numero-bloque {
+    text-align: right;
+    .orden-numero-label {
+        font-size: 8pt;
+        color: #888;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .orden-numero {
+        font-size: 13pt;
+        font-weight: 700;
+        color: #00695c;
+        margin: 0.1rem 0;
+    }
+}
+
+.urgente-badge {
+    background: #d32f2f;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 9pt;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: inline-block;
+}
+
+// Separador
+.separador {
+    border: none;
+    border-top: 1.5px solid #333;
+    margin: 0.6rem 0;
+}
+
+// Título
+.orden-titulo-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.5rem 0;
+
+    .orden-titulo {
+        font-size: 13pt;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin: 0;
+    }
+
+    .orden-fecha {
+        font-size: 10pt;
+        color: #444;
+        margin: 0;
+    }
+}
+
+// Paciente
+.paciente-seccion {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.dato-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+
+    .dato-label {
+        font-weight: 700;
+        font-size: 10pt;
+        min-width: 90px;
+        flex-shrink: 0;
+    }
+
+    .dato-valor {
+        font-size: 11pt;
+        &.dato-subrayado {
+            border-bottom: 1px solid #333;
+            min-width: 200px;
+            padding-bottom: 1px;
+        }
+    }
+}
+
+// Exámenes
+.examenes-seccion { margin: 0.75rem 0; }
+
+.examenes-titulo {
+    font-size: 10pt;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.75rem;
+    color: #1a237e;
+}
+
+.examenes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.examen-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.examen-checkbox {
+    font-size: 14pt;
+    color: #555;
+    width: 20px;
+    flex-shrink: 0;
+}
+
+.examen-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+
+    .examen-num {
+        font-size: 10pt;
+        color: #777;
+        font-weight: 600;
+        min-width: 20px;
+    }
+
+    .examen-nombre {
+        font-size: 11pt;
+        flex: 1;
+    }
+
+    .examen-codigo {
+        background: #e0f2f1;
+        color: #00695c;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 8.5pt;
+        font-weight: 700;
+    }
+}
+
+// Observaciones
+.observaciones-seccion {
+    margin: 0.5rem 0;
+    .obs-label {
+        font-weight: 700;
+        font-size: 9.5pt;
+        margin: 0 0 0.3rem;
+    }
+    .obs-texto {
+        font-size: 10pt;
+        color: #333;
+        margin: 0;
+        font-style: italic;
+    }
+}
+
+// Instrucciones
+.instrucciones {
+    margin: 0.5rem 0;
+    .inst-titulo {
+        font-size: 9pt;
+        font-weight: 700;
+        margin: 0 0 0.3rem;
+        color: #555;
+    }
+    .inst-lista {
+        margin: 0;
+        padding-left: 1.2rem;
+        li {
+            font-size: 9pt;
+            color: #555;
+            margin-bottom: 0.2rem;
+        }
+    }
+}
+
+// Firma
+.firma-seccion {
+    margin-top: 3rem;
+    float: right;
+    text-align: center;
+    width: 220px;
+
+    .firma-linea {
+        border-top: 1px solid #333;
+        margin-bottom: 0.4rem;
+    }
+
+    .firma-nombre {
+        font-size: 10.5pt;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .firma-cargo {
+        font-size: 9pt;
+        color: #666;
+        margin: 0.1rem 0 0;
+    }
+}
+
+// ── Impresión ──────────────────────────────────────────────────────────────
+@media print {
+    .no-print { display: none !important; }
+
+    body { background: white; margin: 0; }
+
+    .orden-hoja {
+        margin: 0;
+        padding: 1.5cm 2cm;
+        box-shadow: none;
+        width: 100%;
+        min-height: auto;
+    }
+
+    @page {
+        size: A4 portrait;
+        margin: 0.5cm;
+    }
+}

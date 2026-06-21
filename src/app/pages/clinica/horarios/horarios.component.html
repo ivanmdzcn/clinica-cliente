@@ -1,0 +1,163 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <mat-icon>schedule</mat-icon>
+                Horarios de Atención
+            </h1>
+            <p class="page-subtitle">Gestión de horarios por médico</p>
+        </div>
+    </div>
+
+    <!-- Selector de médico -->
+    <mat-card class="selector-card">
+        <mat-card-content>
+            <div class="selector-grid">
+                <mat-form-field appearance="outline" class="medico-field">
+                    <mat-label>Seleccionar Médico</mat-label>
+                    <mat-select (selectionChange)="onMedicoChange($event.value)">
+                        @for (m of medicos(); track m.idMedico) {
+                        <mat-option [value]="m.idMedico">
+                            {{ m.nombreUsuario }}
+                            @if (m.especialidadPrincipal) {
+                            — {{ m.especialidadPrincipal }}
+                            }
+                        </mat-option>
+                        }
+                    </mat-select>
+                    <mat-icon matSuffix>person_search</mat-icon>
+                </mat-form-field>
+
+                @if (medicoSeleccionado()) {
+                <button *appPermiso="'medicos.crear'" mat-raised-button color="primary" (click)="abrirFormulario()">
+                    <mat-icon>add</mat-icon>
+                    Nuevo Horario
+                </button>
+                }
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    @if (!medicoSeleccionado()) {
+    <div class="sin-seleccion">
+        <mat-icon>person_search</mat-icon>
+        <p>Selecciona un médico para ver sus horarios</p>
+    </div>
+    }
+
+    @if (medicoSeleccionado()) {
+
+    <!-- Tabla de horarios -->
+    <mat-card class="table-card">
+        <mat-card-content>
+
+            @if (cargando() && dataSource.data.length === 0) {
+            <div class="cargando">Cargando horarios...</div>
+            }
+
+            @if (!cargando() && dataSource.data.length === 0) {
+            <div class="sin-datos">
+                <mat-icon>event_busy</mat-icon>
+                <p>Este médico no tiene horarios registrados</p>
+            </div>
+            }
+
+            @if (dataSource.data.length > 0) {
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+
+                <!-- Médico -->
+                <ng-container matColumnDef="medico">
+                    <th mat-header-cell *matHeaderCellDef>Médico</th>
+                    <td mat-cell *matCellDef="let row">
+                        {{ row.nombreMedico }}
+                    </td>
+                </ng-container>
+
+                <!-- Día -->
+                <ng-container matColumnDef="dia">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Día</th>
+                    <td mat-cell *matCellDef="let row">
+                        <mat-chip class="chip-dia">
+                            {{ obtenerLabelDia(row.diaSemana) }}
+                        </mat-chip>
+                    </td>
+                </ng-container>
+
+                <!-- Hora inicio -->
+                <ng-container matColumnDef="horaInicio">
+                    <th mat-header-cell *matHeaderCellDef>Inicio</th>
+                    <td mat-cell *matCellDef="let row">
+                        <code>{{ formatearHora(row.horaInicio) }}</code>
+                    </td>
+                </ng-container>
+
+                <!-- Hora fin -->
+                <ng-container matColumnDef="horaFin">
+                    <th mat-header-cell *matHeaderCellDef>Fin</th>
+                    <td mat-cell *matCellDef="let row">
+                        <code>{{ formatearHora(row.horaFin) }}</code>
+                    </td>
+                </ng-container>
+
+                <!-- Duración / slots -->
+                <ng-container matColumnDef="duracion">
+                    <th mat-header-cell *matHeaderCellDef>Duración / Slots</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="duracion-col">
+                            <span>{{ row.duracionSlotMin }} min</span>
+                            <small>{{ calcularSlots(row) }} citas disponibles</small>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Activo -->
+                <ng-container matColumnDef="activo">
+                    <th mat-header-cell *matHeaderCellDef>Estado</th>
+                    <td mat-cell *matCellDef="let row">
+                        <mat-chip [class]="row.activo ? 'chip-activo' : 'chip-inactivo'">
+                            {{ row.activo ? 'Activo' : 'Inactivo' }}
+                        </mat-chip>
+                    </td>
+                </ng-container>
+
+                <!-- Acciones -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="acciones">
+                            <button *appPermiso="'medicos.actualizar'" mat-icon-button color="primary"
+                                matTooltip="Editar" (click)="editar(row)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button *appPermiso="'medicos.eliminar'" mat-icon-button color="warn" matTooltip="Eliminar"
+                                (click)="confirmarEliminar(row)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;" [class.fila-inactiva]="!row.activo">
+                </tr>
+
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[7, 14]" showFirstLastButtons />
+            }
+
+        </mat-card-content>
+    </mat-card>
+
+    <!-- --Cargando -->
+    @if (cargando() && dataSource.data.length === 0) {
+    <div class="loader-overlay">
+        <div class="neon-ring"></div>
+    </div>
+    }
+
+    }
+
+</div>

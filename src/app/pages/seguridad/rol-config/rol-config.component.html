@@ -1,0 +1,131 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div class="header-left">
+            <button mat-icon-button (click)="volver()" matTooltip="Volver a roles">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div>
+                <h1 class="page-title">
+                    <mat-icon>settings</mat-icon>
+                    Configuración del Rol
+                </h1>
+                @if (config()) {
+                <p class="page-subtitle">
+                    Rol: <strong>{{ config()!.nombreRol }}</strong>
+                </p>
+                }
+            </div>
+        </div>
+
+        <button mat-raised-button color="primary" [disabled]="guardando() || cargando()" (click)="guardar()">
+            @if (guardando()) {
+            <mat-spinner diameter="20" />
+            } @else {
+            <ng-container>
+                <mat-icon>save</mat-icon>
+                Guardar Cambios
+            </ng-container>
+            }
+        </button>
+    </div>
+
+    <!-- Cargando -->
+    @if (cargando()) {
+    <div class="loader-overlay">
+        <div class="neon-ring"></div>
+    </div>
+    }
+    <!-- @if (cargando()) {
+    <div class="loading-container">
+        <mat-spinner diameter="48" />
+        <p>Cargando configuración...</p>
+    </div>
+    } -->
+
+    <!-- Configuración -->
+    @if (!cargando() && config()) {
+    @for (modulo of config()!.modulos; track modulo.idModulo) {
+    <mat-card class="modulo-card">
+
+        <!-- Header módulo (clicable) -->
+        <mat-card-header class="modulo-header" (click)="toggleModulo(modulo.idModulo)">
+            <mat-card-title class="modulo-titulo">
+                <mat-icon class="chevron" [class.expandido]="moduloExpandido(modulo.idModulo)">
+                    chevron_right
+                </mat-icon>
+                <mat-icon>apps</mat-icon>
+                {{ modulo.nombreModulo }}
+            </mat-card-title>
+        </mat-card-header>
+
+        @if (moduloExpandido(modulo.idModulo)) {
+        <mat-card-content>
+            @for (menu of modulo.menus; track menu.idMenu) {
+            <ng-container *ngTemplateOutlet="menuTemplate; context: { $implicit: menu, level: 0 }"></ng-container>
+            <mat-divider />
+            }
+        </mat-card-content>
+        }
+
+    </mat-card>
+    }
+    }
+
+    <ng-template #menuTemplate let-menu let-level="level">
+        <div class="menu-section">
+
+            <div [class]="level > 0 ? 'menu-header hijo-header' : 'menu-header'" (click)="toggleMenu(menu.idMenu)">
+                <div class="menu-info">
+                    <mat-icon class="chevron" [class.expandido]="menuExpandido(menu.idMenu)">
+                        chevron_right
+                    </mat-icon>
+                    <mat-icon>{{ menu.icono ?? (level > 0 ? 'label' : 'folder') }}</mat-icon>
+                    <span class="menu-nombre">{{ menu.nombre }}</span>
+                    @if (menu.ruta) {
+                    <code>{{ menu.ruta }}</code>
+                    }
+                </div>
+                <mat-slide-toggle [checked]="menu.visibleSidebar" (change)="toggleVisibleSidebar(menu)"
+                    (click)="$event.stopPropagation()" matTooltip="Visible en sidebar">
+                    Sidebar
+                </mat-slide-toggle>
+            </div>
+
+            @if (menuExpandido(menu.idMenu)) {
+
+            @if (menu.permisos.length > 0) {
+            <div class="permisos-container">
+                <div class="permisos-header">
+                    <mat-checkbox [checked]="todosAsignados(menu)" [indeterminate]="algunoAsignado(menu)"
+                        (change)="toggleTodosPermisos(menu)">
+                        Todos los permisos
+                    </mat-checkbox>
+                </div>
+                <div class="permisos-grid">
+                    @for (permiso of menu.permisos; track permiso.idPermiso) {
+                    <mat-checkbox [checked]="permiso.asignado" (change)="togglePermiso(menu, permiso.idPermiso)">
+                        <code>{{ permiso.nombre }}</code>
+                    </mat-checkbox>
+                    }
+                </div>
+            </div>
+            }
+
+            @if (menu.hijos.length) {
+            <div class="hijos-container">
+                @for (hijo of menu.hijos; track hijo.idMenu) {
+                <ng-container
+                    *ngTemplateOutlet="menuTemplate; context: { $implicit: hijo, level: level + 1 }"></ng-container>
+                <mat-divider />
+                }
+            </div>
+            }
+
+            }
+
+        </div>
+    </ng-template>
+
+</div>

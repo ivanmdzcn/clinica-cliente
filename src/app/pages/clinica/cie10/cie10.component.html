@@ -1,0 +1,135 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <mat-icon>menu_book</mat-icon>
+                Catálogo CIE-10
+            </h1>
+            <p class="page-subtitle">Clasificación Internacional de Enfermedades</p>
+        </div>
+        <button *appPermiso="'cie10.crear'" mat-raised-button color="primary" (click)="abrirForm()">
+            <mat-icon>add</mat-icon>
+            Nuevo Código Personalizado
+        </button>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <mat-card class="filtros-card">
+        <mat-card-content>
+            <div class="filtros-grid">
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Buscar</mat-label>
+                    <input matInput [ngModel]="terminoBusqueda" (ngModelChange)="onBusqueda($event)"
+                        placeholder="Código, descripción o categoría...">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Categoría</mat-label>
+                    <mat-select [(ngModel)]="filtroCategoria" (selectionChange)="aplicarFiltros()">
+                        <mat-option value="">Todas</mat-option>
+                        @for (cat of categorias(); track cat) {
+                        <mat-option [value]="cat">{{ cat }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <button mat-stroked-button (click)="limpiarFiltros()" class="btn-limpiar">
+                    <mat-icon>clear</mat-icon>
+                    Limpiar
+                </button>
+
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Tabla -->
+    <mat-card class="table-card">
+        <mat-card-content>
+
+            <!-- --Cargando -->
+            @if (cargando() && dataSource.data.length === 0) {
+            <div class="loader-overlay">
+                <div class="neon-ring"></div>
+            </div>
+            }
+
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+
+                <!-- Código -->
+                <ng-container matColumnDef="codigo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+                    <td mat-cell *matCellDef="let row">
+                        <code class="codigo-cie">{{ row.codigo }}</code>
+                    </td>
+                </ng-container>
+
+                <!-- Descripción -->
+                <ng-container matColumnDef="descripcion">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
+                    <td mat-cell *matCellDef="let row">
+                        {{ row.descripcion }}
+                    </td>
+                </ng-container>
+
+                <!-- Categoría -->
+                <ng-container matColumnDef="categoria">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="categoria-texto">{{ row.categoria ?? '—' }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Tipo -->
+                <ng-container matColumnDef="tipo">
+                    <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                    <td mat-cell *matCellDef="let row">
+                        @if (row.esPersonalizado) {
+                        <mat-chip class="chip-personalizado">
+                            <mat-icon>star</mat-icon>
+                            Personalizado
+                        </mat-chip>
+                        } @else {
+                        <mat-chip class="chip-oficial">
+                            <mat-icon>verified</mat-icon>
+                            Oficial
+                        </mat-chip>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Acciones -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let row">
+                        @if (row.esPersonalizado) {
+                        <button *appPermiso="'cie10.crear'" mat-icon-button color="warn"
+                            matTooltip="Código personalizado">
+                            <mat-icon>edit_note</mat-icon>
+                        </button>
+                        }
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;" [class.fila-personalizada]="row.esPersonalizado">
+                </tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell sin-datos" [attr.colspan]="columnas.length">
+                        <mat-icon>search_off</mat-icon>
+                        <p>No se encontraron resultados</p>
+                    </td>
+                </tr>
+
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[15, 25, 50, 100]" showFirstLastButtons />
+
+        </mat-card-content>
+    </mat-card>
+
+</div>

@@ -1,0 +1,94 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>healing</mat-icon>
+    {{ modoEdicion ? 'Editar' : 'Nuevo' }} Tratamiento
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form">
+
+        <!-- Tipo y Estado -->
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo *</mat-label>
+                <mat-select formControlName="tipo">
+                    @for (t of tiposTratamiento; track t.value) {
+                        <mat-option [value]="t.value">{{ t.label }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            @if (modoEdicion) {
+                <mat-form-field appearance="outline">
+                    <mat-label>Estado *</mat-label>
+                    <mat-select formControlName="estado">
+                        @for (e of estadosTratamiento; track e.value) {
+                            <mat-option [value]="e.value">{{ e.label }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            }
+
+            <!-- Descripción -->
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Descripción *</mat-label>
+                <textarea matInput formControlName="descripcion" rows="3"
+                          placeholder="Describe el tratamiento indicado...">
+                </textarea>
+                @if (form.get('descripcion')!.hasError('required')
+                  && form.get('descripcion')!.touched) {
+                    <mat-error>La descripción es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Indicaciones -->
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Indicaciones</mat-label>
+                <textarea matInput formControlName="indicaciones" rows="2"
+                          placeholder="Instrucciones adicionales para el paciente...">
+                </textarea>
+            </mat-form-field>
+
+            <!-- Fechas -->
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de Inicio</mat-label>
+                <input matInput [matDatepicker]="pickerInicio"
+                       formControlName="fechaInicio">
+                <mat-datepicker-toggle matSuffix [for]="pickerInicio" />
+                <mat-datepicker #pickerInicio />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de Fin</mat-label>
+                <input matInput [matDatepicker]="pickerFin"
+                       formControlName="fechaFin">
+                <mat-datepicker-toggle matSuffix [for]="pickerFin" />
+                <mat-datepicker #pickerFin />
+            </mat-form-field>
+
+            <!-- Motivo suspensión (condicional) -->
+            @if (requiereMotivo) {
+                <mat-form-field appearance="outline" class="col-span-2">
+                    <mat-label>Motivo de Suspensión *</mat-label>
+                    <textarea matInput formControlName="motivoSuspension" rows="2">
+                    </textarea>
+                    @if (form.get('motivoSuspension')!.hasError('required')
+                      && form.get('motivoSuspension')!.touched) {
+                        <mat-error>El motivo de suspensión es obligatorio</mat-error>
+                    }
+                </mat-form-field>
+            }
+
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button color="primary"
+            [disabled]="guardando"
+            (click)="guardar()">
+        <mat-icon>save</mat-icon>
+        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+    </button>
+</mat-dialog-actions>

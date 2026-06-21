@@ -1,0 +1,129 @@
+<!-- Barra de acciones (se oculta al imprimir) -->
+<div class="acciones-imprimir no-print">
+    <button mat-icon-button (click)="volver()" matTooltip="Volver">
+        <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" (click)="imprimir()">
+        <mat-icon>print</mat-icon>
+        Imprimir / Guardar PDF
+    </button>
+</div>
+
+@if (cargando()) {
+    <div class="cargando no-print">Cargando receta...</div>
+}
+
+@if (!cargando() && receta()) {
+    <div class="receta-hoja">
+
+        <!-- Encabezado -->
+        <div class="receta-encabezado">
+            <div class="medico-info">
+                <h2 class="medico-nombre">{{ receta()!.nombreMedico }}</h2>
+                @if (receta()!.colegiadoMedico) {
+                    <p class="medico-dato">
+                        Colegiado No. {{ receta()!.colegiadoMedico }}
+                    </p>
+                }
+                @if (receta()!.cedulaMedico) {
+                    <p class="medico-dato">
+                        Cédula Profesional: {{ receta()!.cedulaMedico }}
+                    </p>
+                }
+            </div>
+            @if (receta()!.selloMedico) {
+                <img [src]="receta()!.selloMedico"
+                     alt="Sello"
+                     class="sello-medico">
+            }
+        </div>
+
+        <hr class="separador">
+
+        <!-- Título receta -->
+        <div class="receta-titulo">
+            <h3>RECETA MÉDICA</h3>
+            <p class="receta-fecha">
+                Fecha: {{ receta()!.fechaEmision | date:'dd/MM/yyyy' }}
+            </p>
+        </div>
+
+        <!-- Datos paciente -->
+        <div class="paciente-datos">
+            <div class="dato-row">
+                <span class="dato-label">Paciente:</span>
+                <span class="dato-valor">{{ receta()!.nombrePaciente }}</span>
+            </div>
+            @if (receta()!.edadPaciente) {
+                <div class="dato-row">
+                    <span class="dato-label">Edad:</span>
+                    <span class="dato-valor">{{ receta()!.edadPaciente }} años</span>
+                </div>
+            }
+        </div>
+
+        <hr class="separador">
+
+        <!-- Símbolo Rx -->
+        <div class="rx-header">
+            <span class="rx-symbol">Rx</span>
+        </div>
+
+        <!-- Detalle medicamentos -->
+        <div class="medicamentos-lista">
+            @for (item of receta()!.detalle; track item.idDetalle) {
+                <div class="medicamento-receta">
+                    <div class="med-linea-1">
+                        <span class="med-numero">{{ item.orden }}.</span>
+                        <strong class="med-nombre">{{ item.nombreMedicamento }}</strong>
+                        @if (item.concentracion) {
+                            <span class="med-concentracion">{{ item.concentracion }}</span>
+                        }
+                        @if (item.presentacion) {
+                            <span class="med-presentacion">— {{ item.presentacion }}</span>
+                        }
+                    </div>
+                    <div class="med-posologia">
+                        <span>Dosis: {{ item.dosis }}</span>
+                        <span class="sep">|</span>
+                        <span>Frecuencia: {{ item.frecuencia }}</span>
+                        <span class="sep">|</span>
+                        <span>Duración: {{ item.duracion }}</span>
+                    </div>
+                    @if (item.indicaciones) {
+                        <p class="med-indicaciones">
+                            Indicaciones: {{ item.indicaciones }}
+                        </p>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Observaciones -->
+        @if (receta()!.observaciones) {
+            <div class="observaciones">
+                <hr class="separador">
+                <p><strong>Observaciones:</strong> {{ receta()!.observaciones }}</p>
+            </div>
+        }
+
+        <!-- Firma -->
+        <div class="firma-seccion">
+            @if (receta()!.firmaMedico) {
+                <img [src]="receta()!.firmaMedico"
+                     alt="Firma"
+                     class="firma-imagen">
+            } @else {
+                <div class="firma-linea"></div>
+            }
+            <p class="firma-nombre">{{ receta()!.nombreMedico }}</p>
+            @if (receta()!.colegiadoMedico) {
+                <p class="firma-colegiado">
+                    Colegiado No. {{ receta()!.colegiadoMedico }}
+                </p>
+            }
+        </div>
+
+    </div>
+}

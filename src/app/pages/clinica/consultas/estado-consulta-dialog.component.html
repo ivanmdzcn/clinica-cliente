@@ -1,0 +1,42 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>update</mat-icon>
+    Cambiar Estado
+</h2>
+
+<mat-dialog-content>
+    <p class="dialog-subtitle">
+        {{ data.consulta.nombrePaciente }}
+        — {{ data.consulta.nombreMedico }}
+        | {{ data.consulta.fechaConsulta | date:'dd/MM/yyyy HH:mm' }}
+    </p>
+
+    <div class="estado-actual">
+        <span class="label">Estado actual:</span>
+        <div class="chip-estado"
+             [style.background-color]="obtenerEstado(data.consulta.estado)?.bg"
+             [style.color]="obtenerEstado(data.consulta.estado)?.color">
+            {{ obtenerEstado(data.consulta.estado)?.label }}
+        </div>
+    </div>
+
+    <form [formGroup]="form">
+        <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Nuevo Estado *</mat-label>
+            <mat-select formControlName="estado">
+                @for (e of estadosConsulta; track e.value) {
+                    <mat-option [value]="e.value">{{ e.label }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button color="primary"
+            [disabled]="guardando"
+            (click)="guardar()">
+        <mat-icon>update</mat-icon>
+        Actualizar Estado
+    </button>
+</mat-dialog-actions>

@@ -1,0 +1,99 @@
+<div class="tab-content">
+
+    <div class="tab-header-signos">
+        <h3 class="tab-titulo">Órdenes de Laboratorio</h3>
+        @if (!esCerrada) {
+        <button *appPermiso="'consultas.crear'" mat-raised-button color="primary"
+            (click)="abrirFormOrdenLab()">
+            <mat-icon>add</mat-icon>
+            Nueva Orden
+        </button>
+        }
+    </div>
+
+    @if (ordenesLab().length === 0) {
+    <div class="sin-datos-signos">
+        <mat-icon>biotech</mat-icon>
+        <p>No hay órdenes de laboratorio</p>
+    </div>
+    }
+
+    @for (orden of ordenesLab(); track orden.idOrden) {
+    <mat-card class="orden-lab-card" [class.urgente]="orden.urgente">
+        <mat-card-content>
+
+            <div class="orden-header">
+                <div class="orden-info-head">
+                    @if (orden.urgente) {
+                    <mat-icon class="urgente-icon" matTooltip="Urgente">
+                        priority_high
+                    </mat-icon>
+                    }
+                    <code class="numero-orden">{{ orden.numeroOrden }}</code>
+                    <span class="orden-fecha">
+                        {{ orden.fechaOrden | date:'dd/MM/yyyy' }}
+                    </span>
+                    @if (obtenerEstadoOrden(orden.estado); as e) {
+                    <div class="chip-estado-orden" [style.background-color]="e.bg" [style.color]="e.color">
+                        {{ e.label }}
+                    </div>
+                    }
+                    @if (orden.codigoCie10) {
+                    <code class="codigo-cie-orden">{{ orden.codigoCie10 }}</code>
+                    }
+                </div>
+
+                <div class="orden-acciones">
+                    <button mat-icon-button matTooltip="Imprimir Orden"
+                        (click)="verOrdenLab(orden.idOrden)">
+                        <mat-icon>print</mat-icon>
+                    </button>
+
+                    @if (orden.estado === 'completada') {
+                    <button mat-stroked-button color="primary" (click)="verResultadosOrden(orden)">
+                        <mat-icon>science</mat-icon>
+                        Ver Resultados
+                    </button>
+                    }
+
+                    @if (!esCerrada && orden.estado === 'pendiente') {
+                    <button *appPermiso="'consultas.eliminar'" mat-icon-button color="warn"
+                        matTooltip="Eliminar orden" (click)="confirmarEliminarOrdenLab(orden)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <div class="examenes-orden">
+                @for (detalle of orden.detalle; track detalle.idDetalle) {
+                <div class="examen-detalle-item">
+                    <code class="codigo-ex-small">{{ detalle.codigoExamen }}</code>
+                    <span class="examen-nombre">{{ detalle.nombreExamen }}</span>
+                    @if (obtenerEstadoDetalle(detalle.estado); as ed) {
+                    <span class="estado-detalle" [style.color]="ed.color">
+                        {{ ed.label }}
+                    </span>
+                    }
+                    @if (detalle.resultados && detalle.resultados.length > 0) {
+                    <span class="resultados-count">
+                        <mat-icon>check_circle</mat-icon>
+                        {{ detalle.resultados.length }} resultado(s)
+                    </span>
+                    }
+                </div>
+                }
+            </div>
+
+            @if (orden.observaciones) {
+            <p class="orden-obs">
+                <mat-icon>notes</mat-icon>
+                {{ orden.observaciones }}
+            </p>
+            }
+
+        </mat-card-content>
+    </mat-card>
+    }
+
+</div>

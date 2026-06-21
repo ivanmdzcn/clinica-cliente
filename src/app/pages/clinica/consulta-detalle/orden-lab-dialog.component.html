@@ -1,0 +1,147 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>biotech</mat-icon>
+    Nueva Orden de Laboratorio
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form">
+
+        <!-- Fecha y urgente -->
+        <div class="form-row">
+            <mat-form-field appearance="outline">
+                <mat-label>Fecha de Orden *</mat-label>
+                <input matInput [matDatepicker]="pickerFecha" formControlName="fechaOrden">
+                <mat-datepicker-toggle matSuffix [for]="pickerFecha" />
+                <mat-datepicker #pickerFecha />
+            </mat-form-field>
+
+            <div class="urgente-toggle">
+                <mat-checkbox formControlName="urgente" color="warn">
+                    <span class="urgente-label">
+                        <mat-icon>priority_high</mat-icon>
+                        Urgente
+                    </span>
+                </mat-checkbox>
+            </div>
+        </div>
+
+        <mat-divider />
+
+        <!-- Exámenes -->
+        <div class="seccion">
+            <h4 class="seccion-titulo">
+                <mat-icon>science</mat-icon>
+                Exámenes Solicitados *
+            </h4>
+
+            <!-- Seleccionados -->
+            @if (examenesSeleccionados.length > 0) {
+                <div class="examenes-seleccionados">
+                    @for (e of examenesSeleccionados; track e.idExamen) {
+                        <div class="examen-chip">
+                            <code class="codigo-ex">{{ e.codigo }}</code>
+                            <span>{{ e.nombre }}</span>
+                            <button mat-icon-button type="button"
+                                    (click)="quitarExamen(e.idExamen)">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Buscador -->
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Buscar examen...</mat-label>
+                <input matInput formControlName="buscarExamen"
+                       autocomplete="off"
+                       placeholder="Hemograma, glucosa...">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            @if (resultadosExamenes.length > 0) {
+                <div class="resultados-lista">
+                    @for (e of resultadosExamenes; track e.idExamen) {
+                        <div class="resultado-item" (click)="seleccionarExamen(e)">
+                            <code class="codigo-ex">{{ e.codigo }}</code>
+                            <div class="resultado-info">
+                                <strong>{{ e.nombre }}</strong>
+                                @if (e.descripcion) {
+                                    <small>{{ e.descripcion }}</small>
+                                }
+                            </div>
+                            <mat-icon class="add-icon">add_circle</mat-icon>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <mat-divider />
+
+        <!-- CIE-10 opcional -->
+        <div class="seccion">
+            <h4 class="seccion-titulo">
+                <mat-icon>diagnosis</mat-icon>
+                Diagnóstico CIE-10 (opcional)
+            </h4>
+
+            @if (cie10Seleccionado) {
+                <div class="cie10-chip">
+                    <code class="codigo-cie">{{ cie10Seleccionado.codigo }}</code>
+                    <span>{{ cie10Seleccionado.descripcion }}</span>
+                    <button mat-icon-button type="button" (click)="quitarCie10()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            } @else {
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Buscar diagnóstico...</mat-label>
+                    <input matInput formControlName="buscarCie10"
+                           autocomplete="off"
+                           placeholder="Ej: diabetes, hipertensión">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                @if (resultadosCie10.length > 0) {
+                    <div class="resultados-lista">
+                        @for (c of resultadosCie10; track c.idCie10) {
+                            <div class="resultado-item" (click)="seleccionarCie10(c)">
+                                <code class="codigo-cie">{{ c.codigo }}</code>
+                                <div class="resultado-info">
+                                    <strong>{{ c.descripcion }}</strong>
+                                    @if (c.categoria) {
+                                        <small>{{ c.categoria }}</small>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+
+        <mat-divider />
+
+        <!-- Observaciones -->
+        <div class="seccion">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Observaciones</mat-label>
+                <textarea matInput formControlName="observaciones" rows="2"
+                          placeholder="Instrucciones especiales...">
+                </textarea>
+            </mat-form-field>
+        </div>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button color="primary"
+            [disabled]="guardando"
+            (click)="guardar()">
+        <mat-icon>biotech</mat-icon>
+        Emitir Orden
+    </button>
+</mat-dialog-actions>

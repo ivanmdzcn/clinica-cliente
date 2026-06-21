@@ -1,0 +1,147 @@
+@if (!sinMedicoAsociado()) {
+    <mat-card class="agenda-card">
+        <mat-card-header>
+            <mat-card-title class="agenda-card-title">
+                <mat-icon>calendar_month</mat-icon>
+                Agenda del Médico
+            </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+
+            <!-- Selector médico — solo visible con permiso dashboard.agenda.todos -->
+            @if (mostrarSelector()) {
+                <mat-form-field appearance="outline" class="selector-medico">
+                    <mat-label>Médico</mat-label>
+                    <mat-select [(ngModel)]="medicoSeleccionado"
+                                (selectionChange)="onMedicoChange()">
+                        @for (m of medicos(); track m.idMedico) {
+                            <mat-option [value]="m.idMedico">
+                                {{ m.nombreUsuario }}
+                            </mat-option>
+                        }
+                    </mat-select>
+                    <mat-icon matSuffix>medical_services</mat-icon>
+                </mat-form-field>
+            }
+
+            <!-- Navegación de fecha -->
+            <div class="nav-fecha">
+                <button mat-icon-button (click)="diaAnterior()"
+                        matTooltip="Día anterior">
+                    <mat-icon>chevron_left</mat-icon>
+                </button>
+
+                <div class="fecha-display">
+                    <span class="fecha-texto">
+                        {{ formatearFechaDisplay(fechaActual()) }}
+                    </span>
+                    @if (esHoy) {
+                        <span class="hoy-badge">Hoy</span>
+                    }
+                </div>
+
+                <button mat-icon-button (click)="diaSiguiente()"
+                        matTooltip="Día siguiente">
+                    <mat-icon>chevron_right</mat-icon>
+                </button>
+
+                @if (!esHoy) {
+                    <button mat-stroked-button (click)="irHoy()" class="btn-hoy">
+                        Hoy
+                    </button>
+                }
+            </div>
+
+            <mat-divider />
+
+            <!-- Resumen -->
+            @if (agenda() && agenda()!.tieneHorario) {
+                <div class="resumen-slots">
+                    <div class="resumen-item citas">
+                        <mat-icon>event_busy</mat-icon>
+                        <span>{{ agenda()!.totalCitas }} citas</span>
+                    </div>
+                    <div class="resumen-item disponibles">
+                        <mat-icon>event_available</mat-icon>
+                        <span>{{ agenda()!.totalDisponibles }} disponibles</span>
+                    </div>
+                </div>
+            }
+
+            <!-- Cargando -->
+            @if (cargando()) {
+                <div class="cargando">
+                    <mat-icon>hourglass_empty</mat-icon>
+                    <span>Cargando agenda...</span>
+                </div>
+            }
+
+            <!-- Sin horario -->
+            @if (!cargando() && agenda() && !agenda()!.tieneHorario) {
+                <div class="sin-horario">
+                    <mat-icon>event_busy</mat-icon>
+                    <p>El médico no tiene horario para este día</p>
+                    <small>{{ agenda()!.diaSemanaNombre | titlecase }}</small>
+                </div>
+            }
+
+            <!-- Slots -->
+            @if (!cargando() && agenda() && agenda()!.tieneHorario) {
+                <div class="slots-lista">
+                    @for (slot of agenda()!.slots; track slot.horaInicio) {
+                        <div class="slot"
+                             [class.disponible]="slot.disponible"
+                             [class.ocupado]="!slot.disponible"
+                             [class.clickeable]="!slot.disponible"
+                             (click)="verCita(slot)">
+
+                            <!-- Hora -->
+                            <div class="slot-hora">
+                                <span class="hora-inicio">{{ slot.horaInicio }}</span>
+                                <span class="hora-fin">{{ slot.horaFin }}</span>
+                            </div>
+
+                            <div class="slot-separador"></div>
+
+                            <!-- Contenido -->
+                            <div class="slot-contenido">
+                                @if (slot.disponible) {
+                                    <span class="disponible-label">
+                                        <mat-icon>radio_button_unchecked</mat-icon>
+                                        Disponible
+                                    </span>
+                                } @else {
+                                    <div class="cita-info">
+                                        <div class="cita-paciente">
+                                            <mat-icon>person</mat-icon>
+                                            <strong>{{ slot.nombrePaciente }}</strong>
+                                        </div>
+                                        @if (slot.motivo) {
+                                            <span class="cita-motivo">
+                                                {{ slot.motivo }}
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Estado -->
+                            @if (!slot.disponible) {
+                                @if (obtenerEstado(slot.estado); as e) {
+                                    <div class="slot-estado"
+                                         [style.background-color]="e.bg"
+                                         [style.color]="e.color">
+                                        {{ e.label }}
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                    }
+                </div>
+            }
+
+        </mat-card-content>
+    </mat-card>
+}

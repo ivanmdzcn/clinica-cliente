@@ -1,0 +1,123 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <div mat-dialog-title>
+        <div class="dialog-titulo-principal">
+            <mat-icon>science</mat-icon>
+            Nuevo Examen de Laboratorio
+        </div>
+        <p class="dialog-subtitulo">
+            Complete la información del examen y sus parámetros
+        </p>
+    </div>
+
+    <mat-dialog-content>
+
+        <!-- Info básica -->
+        <div class="form-grid">
+            <mat-form-field appearance="outline">
+                <mat-label>Código *</mat-label>
+                <input matInput formControlName="codigo"
+                       placeholder="Ej: HEM001"
+                       style="text-transform:uppercase">
+                <mat-icon matSuffix>tag</mat-icon>
+                @if (form.get('codigo')!.hasError('required')
+                  && form.get('codigo')!.touched) {
+                    <mat-error>El código es obligatorio</mat-error>
+                }
+                @if (form.get('codigo')!.hasError('pattern')
+                  && form.get('codigo')!.touched) {
+                    <mat-error>Solo letras mayúsculas y números</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nombre *</mat-label>
+                <input matInput formControlName="nombre"
+                       placeholder="Ej: Hemograma Completo">
+                @if (form.get('nombre')!.hasError('required')
+                  && form.get('nombre')!.touched) {
+                    <mat-error>El nombre es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Descripción</mat-label>
+                <input matInput formControlName="descripcion"
+                       placeholder="Descripción del examen...">
+            </mat-form-field>
+        </div>
+
+        <mat-divider />
+
+        <!-- Parámetros -->
+        <div class="parametros-seccion">
+            <div class="parametros-header">
+                <h4 class="parametros-titulo">
+                    <mat-icon>tune</mat-icon>
+                    Parámetros del Examen
+                </h4>
+                <button mat-stroked-button color="primary" type="button"
+                        (click)="agregarParametro()">
+                    <mat-icon>add</mat-icon>
+                    Agregar Parámetro
+                </button>
+            </div>
+
+            <div formArrayName="parametros">
+                @for (param of parametros.controls; track $index) {
+                    <div class="parametro-row" [formGroupName]="$index">
+                        <span class="param-num">{{ $index + 1 }}</span>
+
+                        <mat-form-field appearance="outline" class="param-nombre">
+                            <mat-label>Parámetro *</mat-label>
+                            <input matInput formControlName="nombre"
+                                   placeholder="Ej: Hemoglobina">
+                            @if (param.get('nombre')!.hasError('required')
+                              && param.get('nombre')!.touched) {
+                                <mat-error>Obligatorio</mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="param-unidad">
+                            <mat-label>Unidad</mat-label>
+                            <input matInput formControlName="unidad"
+                                   placeholder="g/dL">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline" class="param-ref">
+                            <mat-label>Valor de Referencia</mat-label>
+                            <input matInput formControlName="valorReferencia"
+                                   placeholder="Ej: 13.0-17.0">
+                        </mat-form-field>
+
+                        @if (parametros.length > 1) {
+                            <button mat-icon-button color="warn" type="button"
+                                    matTooltip="Eliminar parámetro"
+                                    (click)="eliminarParametro($index)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="guardando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="guardando()">
+            @if (guardando()) {
+                <mat-spinner diameter="20" />
+            } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    Guardar Examen
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

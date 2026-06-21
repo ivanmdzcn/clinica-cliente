@@ -1,0 +1,12 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.toggle-activo {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0;
+}

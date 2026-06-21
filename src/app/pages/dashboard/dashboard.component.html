@@ -1,0 +1,202 @@
+<div class="dashboard">
+
+    <!-- Bienvenida -->
+    <mat-card class="bienvenida-card">
+        <mat-card-content>
+            <div class="bienvenida-content">
+                <div class="bienvenida-texto">
+                    <h1>
+                        {{ obtenerSaludo() }},
+                        <strong>{{ perfil()?.nombre ?? authService.usuario() }}</strong> 👋
+                    </h1>
+                    <p>
+                        Rol: <strong>{{ perfil()?.nombreRol ?? '...' }}</strong>
+                    </p>
+                    <p class="fecha">
+                        {{ fechaActual() | date:'EEEE, d \'de\' MMMM yyyy' : '' : 'es' }}
+                    </p>
+                </div>
+                <mat-icon class="bienvenida-icon">dashboard</mat-icon>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Métricas — solo si tiene permiso -->
+    @if (authService.tienePermiso('dashboard.metricas')) {
+    <h2 class="section-title">Resumen del sistema</h2>
+
+    @if (cargandoMetricas()) {
+    <div class="metricas-loading">
+        <mat-spinner diameter="32" />
+        <span>Cargando métricas...</span>
+    </div>
+    }
+
+    @if (!cargandoMetricas() && metricas()) {
+    <div class="metricas-grid">
+
+        <mat-card class="metrica-card usuarios">
+            <mat-card-content>
+                <div class="metrica-content">
+                    <div class="metrica-info">
+                        <span class="metrica-valor">{{ metricas()!.usuariosActivos }}</span>
+                        <span class="metrica-label">Usuarios Activos</span>
+                    </div>
+                    <mat-icon class="metrica-icon">people</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card class="metrica-card sesiones">
+            <mat-card-content>
+                <div class="metrica-content">
+                    <div class="metrica-info">
+                        <span class="metrica-valor">{{ metricas()!.sesionesActivas }}</span>
+                        <span class="metrica-label">Sesiones Activas</span>
+                    </div>
+                    <mat-icon class="metrica-icon">sensors</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card class="metrica-card roles">
+            <mat-card-content>
+                <div class="metrica-content">
+                    <div class="metrica-info">
+                        <span class="metrica-valor">{{ metricas()!.rolesActivos }}</span>
+                        <span class="metrica-label">Roles Activos</span>
+                    </div>
+                    <mat-icon class="metrica-icon">shield</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card class="metrica-card modulos">
+            <mat-card-content>
+                <div class="metrica-content">
+                    <div class="metrica-info">
+                        <span class="metrica-valor">{{ metricas()!.modulosActivos }}</span>
+                        <span class="metrica-label">Módulos Activos</span>
+                    </div>
+                    <mat-icon class="metrica-icon">apps</mat-icon>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+    </div>
+    }
+    }
+
+    <!-- Acceso rápido -->
+    <h2 class="section-title">Acceso rápido</h2>
+
+    <div class="cards-grid">
+
+        @if (authService.tienePermiso('usuarios.leer')) {
+        <mat-card class="acceso-card" routerLink="/seguridad/usuarios">
+            <mat-card-content>
+                <mat-icon class="card-icon usuarios">people</mat-icon>
+                <h3>Usuarios</h3>
+                <p>Gestionar usuarios del sistema</p>
+            </mat-card-content>
+        </mat-card>
+        }
+
+        @if (authService.tienePermiso('roles.leer')) {
+        <mat-card class="acceso-card" routerLink="/seguridad/roles">
+            <mat-card-content>
+                <mat-icon class="card-icon roles">shield</mat-icon>
+                <h3>Roles</h3>
+                <p>Administrar roles y permisos</p>
+            </mat-card-content>
+        </mat-card>
+        }
+
+        @if (authService.tienePermiso('permisos.leer')) {
+        <mat-card class="acceso-card" routerLink="/seguridad/permisos">
+            <mat-card-content>
+                <mat-icon class="card-icon permisos">lock</mat-icon>
+                <h3>Permisos</h3>
+                <p>Configurar permisos del sistema</p>
+            </mat-card-content>
+        </mat-card>
+        }
+
+        @if (authService.tienePermiso('modulos.leer')) {
+        <mat-card class="acceso-card" routerLink="/seguridad/modulos">
+            <mat-card-content>
+                <mat-icon class="card-icon modulos">apps</mat-icon>
+                <h3>Módulos</h3>
+                <p>Administrar módulos del sistema</p>
+            </mat-card-content>
+        </mat-card>
+        }
+
+        @if (authService.tienePermiso('menus.leer')) {
+        <mat-card class="acceso-card" routerLink="/seguridad/menus">
+            <mat-card-content>
+                <mat-icon class="card-icon menus">menu_book</mat-icon>
+                <h3>Menús</h3>
+                <p>Gestionar menús del sistema</p>
+            </mat-card-content>
+        </mat-card>
+        }
+
+        @if (authService.tienePermiso('empresa.leer')) {
+        <mat-card class="acceso-card" routerLink="/configuracion/empresa">
+            <mat-card-content>
+                <mat-icon class="card-icon empresa">business</mat-icon>
+                <h3>Empresa</h3>
+                <p>Configuración de la empresa</p>
+            </mat-card-content>
+        </mat-card>
+        }
+
+    </div>
+
+    <!-- Info del sistema -->
+    <mat-card class="info-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>info</mat-icon>
+                Información del sistema
+            </mat-card-title>
+        </mat-card-header>
+        <mat-divider />
+        <mat-card-content>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Usuario</span>
+                    <span class="info-value">{{ perfil()?.nombreUsuario }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email</span>
+                    <span class="info-value">{{ perfil()?.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Rol</span>
+                    <span class="info-value">{{ perfil()?.nombreRol }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Permisos activos</span>
+                    <span class="info-value">{{ perfil()?.permisos?.length ?? 0 }}</span>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <div class="dashboard-grid">
+
+        <!-- Cards de resumen arriba -->
+        <div class="stats-row">
+            <!-- tus cards existentes -->
+        </div>
+
+        <!-- Agenda abajo -->
+        <div class="agenda-row">
+            <app-agenda-medico />
+        </div>
+
+    </div>
+
+</div>

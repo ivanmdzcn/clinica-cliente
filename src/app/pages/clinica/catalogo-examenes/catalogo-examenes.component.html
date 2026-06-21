@@ -1,0 +1,150 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <mat-icon>science</mat-icon>
+                Catálogo de Exámenes
+            </h1>
+            <p class="page-subtitle">Exámenes de laboratorio disponibles</p>
+        </div>
+        <button *appPermiso="'laboratorio.crear'" mat-raised-button color="primary" (click)="abrirForm()">
+            <mat-icon>add</mat-icon>
+            Nuevo Examen
+        </button>
+    </div>
+
+    <!-- Búsqueda -->
+    <mat-card class="filtros-card">
+        <mat-card-content>
+            <div class="busqueda-grid">
+                <mat-form-field appearance="outline">
+                    <mat-label>Buscar examen</mat-label>
+                    <input matInput [(ngModel)]="terminoBusqueda" (input)="aplicarBusqueda()"
+                        placeholder="Código o nombre...">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+                <button mat-stroked-button (click)="limpiarBusqueda()" class="btn-limpiar">
+                    <mat-icon>clear</mat-icon>
+                    Limpiar
+                </button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Tabla -->
+    <mat-card class="table-card">
+        <mat-card-content>
+
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+
+                <!-- Código -->
+                <ng-container matColumnDef="codigo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+                    <td mat-cell *matCellDef="let row">
+                        <code class="codigo-examen">{{ row.codigo }}</code>
+                    </td>
+                </ng-container>
+
+                <!-- Nombre -->
+                <ng-container matColumnDef="nombre">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let row">
+                        <strong>{{ row.nombre }}</strong>
+                    </td>
+                </ng-container>
+
+                <!-- Descripción -->
+                <ng-container matColumnDef="descripcion">
+                    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="text-secondary">{{ row.descripcion ?? '—' }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Parámetros -->
+                <ng-container matColumnDef="parametros">
+                    <th mat-header-cell *matHeaderCellDef>Parámetros</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="badge-parametros">
+                            {{ row.parametros?.length ?? 0 }} parámetros
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Acciones -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let row">
+                        <button mat-icon-button color="primary" (click)="verParametros(row)">
+                            <mat-icon>
+                                {{ examenSeleccionado()?.idExamen === row.idExamen
+                                ? 'expand_less' : 'expand_more' }}
+                            </mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"
+                    [class.fila-activa]="examenSeleccionado()?.idExamen === row.idExamen">
+                </tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell sin-datos" [attr.colspan]="columnas.length">
+                        <mat-icon>search_off</mat-icon>
+                        <p>No se encontraron exámenes</p>
+                    </td>
+                </tr>
+
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons />
+
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Panel de parámetros del examen seleccionado -->
+    @if (examenSeleccionado()) {
+    <mat-card class="parametros-card">
+        <mat-card-header>
+            <mat-card-title>
+                <mat-icon>tune</mat-icon>
+                Parámetros — {{ examenSeleccionado()!.nombre }}
+            </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <table class="tabla-parametros">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Parámetro</th>
+                        <th>Unidad</th>
+                        <th>Valor de Referencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (p of examenSeleccionado()!.parametros; track p.idParametro) {
+                    <tr>
+                        <td class="orden">{{ p.ordenVisualizacion }}</td>
+                        <td class="param-nombre-col">{{ p.nombre }}</td>
+                        <td class="unidad">{{ p.unidad ?? '—' }}</td>
+                        <td class="referencia">{{ p.valorReferencia ?? '—' }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </mat-card-content>
+    </mat-card>
+
+    }
+
+    <!-- --Cargando -->
+    @if (cargando() && dataSource.data.length === 0) {
+    <div class="loader-overlay">
+        <div class="neon-ring"></div>
+    </div>
+    }
+
+</div>

@@ -1,0 +1,21 @@
+.dialog-titulo-principal {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dialog-subtitulo {
+    margin: 0.25rem 0 0;
+    color: #777;
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem 0;
+
+    .col-span-2 { grid-column: 1 / -1; }
+}

@@ -1,0 +1,55 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <div mat-dialog-title>
+        <div class="dialog-titulo-principal">
+            <mat-icon>update</mat-icon>
+            Cambiar Estado — {{ data.cita.nombrePaciente }}
+        </div>
+        <p class="subtitulo">
+            {{ data.cita.fechaCita | date:'dd/MM/yyyy' }}
+            {{ formatearHora(data.cita.horaCita) }}
+            — {{ data.cita.nombreMedico }}
+        </p>
+    </div>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nuevo Estado *</mat-label>
+                <mat-select formControlName="estado">
+                    @for (e of estadosCita; track e.value) {
+                        <mat-option [value]="e.value">
+                            {{ e.label }}
+                        </mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            @if (requiereMotivo) {
+                <mat-form-field appearance="outline">
+                    <mat-label>Motivo de Cancelación *</mat-label>
+                    <textarea matInput formControlName="motivoCancelacion" rows="2"></textarea>
+                </mat-form-field>
+            }
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">
+            @if (cargando()) {
+            <mat-spinner diameter="20" />
+            } @else {
+            <ng-container>
+                <mat-icon>update</mat-icon>
+                Actualizar Estado
+            </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

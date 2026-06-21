@@ -1,0 +1,108 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>diagnosis</mat-icon>
+    {{ modoEdicion ? 'Editar' : 'Nuevo' }} Diagnóstico
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form">
+
+        <!-- Buscador CIE-10 -->
+        <div class="seccion">
+            <h4 class="seccion-titulo">
+                <mat-icon>search</mat-icon>
+                Buscar en Catálogo CIE-10 (opcional)
+            </h4>
+
+            <!-- CIE-10 seleccionado -->
+            @if (cie10Seleccionado) {
+                <div class="cie10-seleccionado">
+                    <code class="codigo-cie">{{ cie10Seleccionado.codigo }}</code>
+                    <span class="cie10-desc">{{ cie10Seleccionado.descripcion }}</span>
+                    <button mat-icon-button color="warn"
+                            matTooltip="Quitar CIE-10"
+                            type="button"
+                            (click)="quitarCie10()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+            } @else {
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Buscar código o enfermedad...</mat-label>
+                    <input matInput formControlName="buscarCie10"
+                           autocomplete="off"
+                           placeholder="Ej: diabetes, J45, hipertensión">
+                    <mat-icon matSuffix>
+                        {{ buscandoCie10 ? 'hourglass_empty' : 'search' }}
+                    </mat-icon>
+                </mat-form-field>
+
+                <!-- Resultados -->
+                @if (resultadosCie10.length > 0) {
+                    <div class="resultados-cie10">
+                        @for (r of resultadosCie10; track r.idCie10) {
+                            <div class="resultado-item" (click)="seleccionarCie10(r)">
+                                <code class="codigo-cie">{{ r.codigo }}</code>
+                                <div class="resultado-info">
+                                    <span class="resultado-desc">{{ r.descripcion }}</span>
+                                    @if (r.categoria) {
+                                        <small class="resultado-cat">{{ r.categoria }}</small>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                @if (!buscandoCie10 && form.get('buscarCie10')!.value?.length >= 2
+                  && resultadosCie10.length === 0) {
+                    <p class="sin-resultados">
+                        <mat-icon>info</mat-icon>
+                        No se encontraron resultados. Puede escribir el diagnóstico libremente.
+                    </p>
+                }
+            }
+        </div>
+
+        <mat-divider />
+
+        <!-- Diagnóstico -->
+        <div class="seccion">
+            <h4 class="seccion-titulo">
+                <mat-icon>edit_note</mat-icon>
+                Detalle del Diagnóstico
+            </h4>
+
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Descripción del Diagnóstico *</mat-label>
+                <input matInput formControlName="descripcion"
+                       placeholder="Diagnóstico del paciente">
+                @if (form.get('descripcion')!.hasError('required')
+                  && form.get('descripcion')!.touched) {
+                    <mat-error>La descripción es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Tipo de Diagnóstico *</mat-label>
+                <mat-select formControlName="tipo">
+                    @for (t of tiposDiag; track t.value) {
+                        <mat-option [value]="t.value">
+                            {{ t.label }}
+                        </mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false">Cancelar</button>
+    <button mat-raised-button color="primary"
+            [disabled]="guardando"
+            (click)="guardar()">
+        <mat-icon>save</mat-icon>
+        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+    </button>
+</mat-dialog-actions>

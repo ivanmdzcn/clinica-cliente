@@ -1,0 +1,154 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'medical_services' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Médico' : 'Nuevo Médico' }}
+    </h2>
+
+    <mat-dialog-content>
+
+        @if (cargandoDatos()) {
+        <div class="cargando-datos">
+            <mat-spinner diameter="32" />
+            <p>Cargando datos del médico...</p>
+        </div>
+        } @else {
+
+        <!-- Datos del médico -->
+        <div class="form-grid">
+
+            @if (!modoEdicion) {
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Usuario (médico) *</mat-label>
+                <mat-select formControlName="idUsuario">
+                    @for (u of usuarios(); track u.idUsuario) {
+                    <mat-option [value]="u.idUsuario">
+                        {{ u.nombre }} — {{ u.email }}
+                    </mat-option>
+                    }
+                </mat-select>
+                <mat-icon matSuffix>person</mat-icon>
+                @if (idUsuario.hasError('required') && idUsuario.touched) {
+                <mat-error>El usuario es obligatorio</mat-error>
+                }
+            </mat-form-field>
+            }
+
+            <mat-form-field appearance="outline">
+                <mat-label>Cédula Profesional *</mat-label>
+                <input matInput formControlName="cedulaProfesional">
+                <mat-icon matSuffix>badge</mat-icon>
+                @if (cedulaProfesional.hasError('required') && cedulaProfesional.touched) {
+                <mat-error>La cédula es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Número de Colegiado *</mat-label>
+                <input matInput formControlName="numeroColegiado">
+                <mat-icon matSuffix>numbers</mat-icon>
+                @if (numeroColegiado.hasError('required') && numeroColegiado.touched) {
+                <mat-error>El número de colegiado es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Consultorio</mat-label>
+                <input matInput formControlName="consultorio" placeholder="Ej: Consultorio 3A">
+                <mat-icon matSuffix>door_front</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Teléfono Consultorio</mat-label>
+                <input matInput formControlName="telefonoConsultorio">
+                <mat-icon matSuffix>phone</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Observaciones</mat-label>
+                <textarea matInput formControlName="observaciones" rows="2"></textarea>
+            </mat-form-field>
+
+        </div>
+
+        <mat-divider class="divider" />
+
+        <!-- Especialidades -->
+        <div class="especialidades-section">
+            <h4 class="esp-titulo">
+                <mat-icon>local_hospital</mat-icon>
+                Especialidades
+                <span class="esp-hint">
+                    (clic en chip para marcar como principal ⭐)
+                </span>
+            </h4>
+
+            @if (especialidadesAsignadas().length > 0) {
+            <div class="chips-asignados">
+                @for (esp of especialidadesAsignadas(); track esp.idEspecialidad) {
+                <div class="chip-esp"
+                     [class.principal]="esp.esPrincipal"
+                     (click)="togglePrincipal(esp.idEspecialidad)">
+                    @if (esp.esPrincipal) {
+                    <mat-icon class="chip-star">star</mat-icon>
+                    }
+                    <span>{{ obtenerNombreEspecialidad(esp.idEspecialidad) }}</span>
+                    <mat-icon class="chip-close"
+                              (click)="$event.stopPropagation(); quitarEspecialidad(esp.idEspecialidad)">
+                        close
+                    </mat-icon>
+                </div>
+                }
+            </div>
+            } @else {
+            <p class="esp-vacio">No hay especialidades asignadas</p>
+            }
+
+            <div class="esp-buscador">
+                <mat-form-field appearance="outline" class="buscador-field">
+                    <mat-label>Buscar especialidad</mat-label>
+                    <input matInput
+                           [(ngModel)]="busquedaEspecialidad"
+                           [ngModelOptions]="{standalone: true}"
+                           placeholder="Escribe para buscar...">
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+
+                @if (busquedaEspecialidad.length > 0) {
+                <div class="esp-lista">
+                    @if (especialidadesFiltradas.length === 0) {
+                    <div class="esp-sin-resultados">
+                        No se encontraron especialidades
+                    </div>
+                    }
+                    @for (esp of especialidadesFiltradas; track esp.idEspecialidad) {
+                    <div class="esp-item" (click)="agregarEspecialidad(esp)">
+                        <mat-icon>local_hospital</mat-icon>
+                        <span>{{ esp.nombre }}</span>
+                        <mat-icon class="esp-add">add_circle</mat-icon>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+
+        }
+
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando() || cargandoDatos()">
+            @if (cargando()) {
+            <mat-spinner diameter="20" />
+            } @else {
+            <ng-container>
+                <mat-icon>save</mat-icon>
+                {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+            </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

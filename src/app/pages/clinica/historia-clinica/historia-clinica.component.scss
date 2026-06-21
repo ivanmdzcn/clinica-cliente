@@ -1,0 +1,338 @@
+.page-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1a237e;
+
+    mat-icon { font-size: 1.8rem; width: 1.8rem; height: 1.8rem; }
+}
+
+.page-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #777;
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+}
+
+// Info paciente
+.paciente-card {
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #e8eaf6 0%, #f5f5f5 100%) !important;
+    border-top: 4px solid #3f51b5;
+}
+
+.paciente-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.paciente-dato {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .dato-label {
+        font-size: 0.72rem;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .dato-valor {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #333;
+    }
+}
+
+.chip-sangre {
+    background: #fce4ec !important;
+    color: #c2185b !important;
+    font-weight: 700 !important;
+    font-size: 0.75rem !important;
+}
+
+// Historia tabs
+.historia-tabs {
+    ::ng-deep .mat-mdc-tab-header {
+        background: white;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+}
+
+.tab-icon {
+    font-size: 1.1rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+}
+
+.tab-content {
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tab-titulo {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a237e;
+    margin: 0;
+}
+
+// Lista alergias
+.alergias-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.alergia-card {
+    border-radius: 10px !important;
+    border-left: 4px solid #777;
+    transition: box-shadow 0.2s;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+}
+
+.alergia-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.alergia-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+}
+
+.alergia-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .alergia-icon {
+        font-size: 1.2rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        color: #f57c00;
+    }
+
+    strong { font-size: 0.95rem; }
+}
+
+.alergia-reaccion {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0;
+    padding-left: 1.7rem;
+}
+
+.alergia-fecha {
+    font-size: 0.75rem;
+    color: #aaa;
+    padding-left: 1.7rem;
+}
+
+.alergia-acciones {
+    display: flex;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+.chip-severidad {
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    height: 22px !important;
+    padding: 0 8px !important;
+}
+
+// Sin datos
+.sin-datos {
+    text-align: center;
+    padding: 3rem;
+    color: #aaa;
+
+    mat-icon {
+        font-size: 3rem;
+        width: 3rem;
+        height: 3rem;
+        display: block;
+        margin: 0 auto 0.5rem;
+    }
+
+    p { margin: 0; }
+}
+
+// Tipos de antecedente
+.tipo-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.tipo-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+
+    mat-icon {
+        color: #3f51b5;
+        font-size: 1.3rem;
+        width: 1.3rem;
+        height: 1.3rem;
+    }
+
+    h4 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1a237e;
+    }
+}
+
+.tipo-count {
+    background: #e8eaf6;
+    color: #3f51b5;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+// Antecedente cards
+.antecedentes-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.antecedente-card {
+    border-radius: 10px !important;
+    border-left: 4px solid transparent;
+    transition: box-shadow 0.2s;
+
+    &.personal { border-left-color: #1976d2; }
+    &.familiar  { border-left-color: #7b1fa2; }
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+}
+
+.antecedente-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.antecedente-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+
+    strong { font-size: 0.95rem; }
+}
+
+.antecedente-desc {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0;
+}
+
+.antecedente-fecha {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.antecedente-acciones {
+    display: flex;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+
+// Consultas
+.chip-tipo {
+    background: #f3e5f5 !important;
+    color: #7b1fa2 !important;
+    font-size: 0.75rem !important;
+    height: 24px !important;
+}
+
+.chip-estado-consulta {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+// Tabla consultas
+.consultas-tabla {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.medico-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    span { font-size: 0.9rem; }
+    small { color: #777; font-size: 0.78rem; }
+}
+
+.motivo-texto {
+    font-size: 0.88rem;
+    max-width: 250px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.acciones { display: flex; gap: 0.25rem; }
+
+.fila-cerrada td { opacity: 0.65; }

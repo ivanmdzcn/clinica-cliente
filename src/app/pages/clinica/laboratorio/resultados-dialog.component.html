@@ -1,0 +1,149 @@
+<h2 mat-dialog-title class="dialog-title">
+    <mat-icon>science</mat-icon>
+    {{ soloLectura ? 'Resultados' : 'Ingresar Resultados' }} — {{ data.orden.numeroOrden }}
+</h2>
+
+<mat-dialog-content>
+
+    <!-- Info orden -->
+    <div class="orden-info">
+        <div class="info-item">
+            <mat-icon>account_circle</mat-icon>
+            <span>{{ data.orden.nombrePaciente }}</span>
+        </div>
+        <div class="info-item">
+            <mat-icon>medical_services</mat-icon>
+            <span>{{ data.orden.nombreMedico }}</span>
+        </div>
+        <div class="info-item">
+            <mat-icon>calendar_today</mat-icon>
+            <span>{{ data.orden.fechaOrden | date:'dd/MM/yyyy' }}</span>
+        </div>
+        @if (data.orden.urgente) {
+            <div class="urgente-badge">
+                <mat-icon>priority_high</mat-icon>
+                Urgente
+            </div>
+        }
+    </div>
+
+    <mat-divider />
+
+    @if (cargando()) {
+        <div class="cargando">Cargando parámetros...</div>
+    } @else {
+
+        <!-- Tab por cada examen -->
+        <mat-tab-group animationDuration="100ms">
+
+            @for (examen of examenes(); track examen.detalle.idDetalle) {
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <code class="tab-codigo">{{ examen.detalle.codigoExamen }}</code>
+                        {{ examen.detalle.nombreExamen }}
+                        @if (obtenerEstadoDetalle(examen.detalle.estado); as ed) {
+                            <span class="tab-estado" [style.color]="ed.color">
+                                ● {{ ed.label }}
+                            </span>
+                        }
+                    </ng-template>
+
+                    <div class="examen-contenido">
+
+                        <!-- Tabla de parámetros -->
+                        <form [formGroup]="examen.form">
+                            <div formArrayName="resultados">
+                                <table class="tabla-resultados">
+                                    <thead>
+                                        <tr>
+                                            <th>Parámetro</th>
+                                            <th>Unidad</th>
+                                            <th>Ref. Normal</th>
+                                            <th>Resultado</th>
+                                            <th>Anormal</th>
+                                            @if (!soloLectura) {
+                                                <th>Obs.</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (p of examen.parametros; track p.idParametro; let i = $index) {
+                                            <tr [formGroupName]="i"
+                                                [class.anormal]="getResultadosArray(examen).at(i).get('anormal')?.value">
+                                                <td class="param-nombre">
+                                                    {{ p.nombre }}
+                                                </td>
+                                                <td class="param-unidad">
+                                                    {{ p.unidad ?? '—' }}
+                                                </td>
+                                                <td class="param-ref">
+                                                    {{ p.valorReferencia ?? '—' }}
+                                                </td>
+                                                <td class="param-resultado">
+                                                    @if (!soloLectura) {
+                                                        <input class="input-resultado"
+                                                               formControlName="resultado"
+                                                               [placeholder]="p.unidad ?? ''">
+                                                    } @else {
+                                                        <strong>
+                                                            {{ getResultadosArray(examen).at(i).get('resultado')?.value || '—' }}
+                                                        </strong>
+                                                    }
+                                                </td>
+                                                <td class="param-anormal">
+                                                    @if (!soloLectura) {
+                                                        <mat-checkbox
+                                                            formControlName="anormal"
+                                                            color="warn">
+                                                        </mat-checkbox>
+                                                    } @else {
+                                                        @if (getResultadosArray(examen).at(i).get('anormal')?.value) {
+                                                            <mat-icon class="anormal-icon">warning</mat-icon>
+                                                        }
+                                                    }
+                                                </td>
+                                                @if (!soloLectura) {
+                                                    <td class="param-obs">
+                                                        <input class="input-obs"
+                                                               formControlName="observaciones"
+                                                               placeholder="Observación...">
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+
+                        @if (!soloLectura && examen.detalle.estado !== 'completado') {
+                            <div class="examen-actions">
+                                <button mat-raised-button color="primary"
+                                        [disabled]="guardando()"
+                                        (click)="guardarExamen(examen)">
+                                    <mat-icon>save</mat-icon>
+                                    Guardar Resultados — {{ examen.detalle.nombreExamen }}
+                                </button>
+                            </div>
+                        }
+
+                    </div>
+                </mat-tab>
+            }
+
+        </mat-tab-group>
+    }
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    @if (soloLectura) {
+        <button mat-stroked-button color="primary" (click)="imprimir()">
+            <mat-icon>print</mat-icon>
+            Imprimir / PDF
+        </button>
+    }
+    <button mat-button [mat-dialog-close]="false">
+        {{ soloLectura ? 'Cerrar' : 'Cancelar' }}
+    </button>
+</mat-dialog-actions>

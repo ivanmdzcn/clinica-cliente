@@ -1,0 +1,41 @@
+.dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #1a237e;
+
+    mat-icon { color: #f57c00; }
+}
+
+.dialog-subtitle {
+    color: #777;
+    font-size: 0.85rem;
+    margin: 0 0 1rem;
+}
+
+.estado-actual {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+
+    .label {
+        font-size: 0.85rem;
+        color: #555;
+        font-weight: 500;
+    }
+}
+
+.chip-estado {
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.w-100 { width: 100%; }
+
+mat-dialog-content {
+    min-width: 380px;
+    overflow: visible;
+}

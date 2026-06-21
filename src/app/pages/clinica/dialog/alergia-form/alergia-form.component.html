@@ -1,0 +1,52 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'warning' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Alergia' : 'Nueva Alergia' }}
+    </h2>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Medicamento o Elemento *</mat-label>
+                <input matInput formControlName="medicamentoOElemento" placeholder="Ej: Penicilina, Polen...">
+                <mat-icon matSuffix>medication</mat-icon>
+                @if (medicamentoOElemento.hasError('required') && medicamentoOElemento.touched) {
+                <mat-error>Este campo es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Severidad *</mat-label>
+                <mat-select formControlName="severidad">
+                    @for (s of severidades; track s.value) {
+                    <mat-option [value]="s.value">{{ s.label }}</mat-option>
+                    }
+                </mat-select>
+                <mat-icon matSuffix>priority_high</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Reacción</mat-label>
+                <textarea matInput formControlName="reaccion" rows="3" placeholder="Describe la reacción..."></textarea>
+            </mat-form-field>
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">
+            @if (cargando()) {
+            <mat-spinner diameter="20" />
+            } @else {
+            <ng-container>
+                <mat-icon>save</mat-icon>
+                {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+            </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

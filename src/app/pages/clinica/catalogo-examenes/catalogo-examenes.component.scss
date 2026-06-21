@@ -1,0 +1,146 @@
+.page-container { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1a237e;
+    mat-icon { font-size: 1.8rem; width: 1.8rem; height: 1.8rem; }
+}
+
+.page-subtitle { color: #777; margin: 0.25rem 0 0; font-size: 0.9rem; }
+
+// Filtros
+.filtros-card { border-radius: 12px !important; }
+
+// .filtros-grid {
+//     display: grid;
+//     grid-template-columns: 2fr 1fr auto;
+//     gap: 1rem;
+//     align-items: stretch;
+// }
+
+// .btn-limpiar { height: 46px; }
+
+.busqueda-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.btn-limpiar { height: 46px; }
+
+// Tabla
+.table-card { border-radius: 12px !important; }
+
+.w-100 { width: 100%; }
+
+.codigo-examen {
+    background: #e8eaf6;
+    color: #1a237e;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.text-secondary { font-size: 0.85rem; color: #666; }
+
+.badge-parametros {
+    background: #f3e5f5;
+    color: #7b1fa2;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.fila-activa { background: #f5f5ff; }
+
+// Panel parámetros
+.parametros-card {
+    border-radius: 12px !important;
+    border-top: 3px solid #3f51b5;
+
+    mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem !important;
+        color: #1a237e;
+
+        mat-icon { color: #3f51b5; font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
+    }
+}
+
+.tabla-parametros {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+
+    thead tr {
+        background: #e8eaf6;
+        th {
+            padding: 0.6rem 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            color: #1a237e;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        &:hover { background: #fafafa; }
+
+        td { padding: 0.55rem 0.75rem; }
+    }
+
+    .orden {
+        width: 40px;
+        text-align: center;
+        color: #777;
+        font-weight: 600;
+    }
+
+    .param-nombre-col { font-weight: 500; }
+
+    .unidad {
+        color: #1976d2;
+        font-weight: 500;
+        font-size: 0.82rem;
+    }
+
+    .referencia {
+        color: #555;
+        font-size: 0.82rem;
+    }
+}
+
+.sin-datos {
+    text-align: center;
+    padding: 3rem;
+    color: #aaa;
+
+    mat-icon {
+        font-size: 3rem;
+        width: 3rem;
+        height: 3rem;
+        display: block;
+        margin: 0 auto 0.5rem;
+    }
+
+    p { margin: 0; }
+}

@@ -1,0 +1,103 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title class="dialog-title">
+        <mat-icon>lock</mat-icon>
+        Cambiar Contraseña
+    </h2>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <!-- Contraseña actual -->
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Contraseña actual</mat-label>
+                <input
+                    matInput
+                    [type]="mostrarActual() ? 'text' : 'password'"
+                    formControlName="contrasenaActual">
+                <button
+                    mat-icon-button
+                    matSuffix
+                    type="button"
+                    (click)="toggleMostrarActual()">
+                    <mat-icon>
+                        {{ mostrarActual() ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                </button>
+                @if (contrasenaActual.hasError('required') && contrasenaActual.touched) {
+                    <mat-error>La contraseña actual es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Contraseña nueva -->
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nueva contraseña</mat-label>
+                <input
+                    matInput
+                    [type]="mostrarNueva() ? 'text' : 'password'"
+                    formControlName="contrasenaNueva">
+                <button
+                    mat-icon-button
+                    matSuffix
+                    type="button"
+                    (click)="toggleMostrarNueva()">
+                    <mat-icon>
+                        {{ mostrarNueva() ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                </button>
+                @if (contrasenaNueva.hasError('required') && contrasenaNueva.touched) {
+                    <mat-error>La nueva contraseña es obligatoria</mat-error>
+                }
+                @if (contrasenaNueva.hasError('minlength') && contrasenaNueva.touched) {
+                    <mat-error>Mínimo 8 caracteres</mat-error>
+                }
+            </mat-form-field>
+
+            <!-- Confirmar contraseña -->
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Confirmar nueva contraseña</mat-label>
+                <input
+                    matInput
+                    [type]="mostrarConfirm() ? 'text' : 'password'"
+                    formControlName="confirmarContrasena">
+                <button
+                    mat-icon-button
+                    matSuffix
+                    type="button"
+                    (click)="toggleMostrarConfirm()">
+                    <mat-icon>
+                        {{ mostrarConfirm() ? 'visibility_off' : 'visibility' }}
+                    </mat-icon>
+                </button>
+                @if (confirmarContrasena.hasError('required') && confirmarContrasena.touched) {
+                    <mat-error>Confirma la nueva contraseña</mat-error>
+                }
+                @if (form.hasError('noCoinciden') && confirmarContrasena.touched) {
+                    <mat-error>Las contraseñas no coinciden</mat-error>
+                }
+            </mat-form-field>
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">
+            Cancelar
+        </button>
+        <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="cargando()">
+            @if (cargando()) {
+                <mat-spinner diameter="20" />
+            } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    Actualizar Contraseña
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

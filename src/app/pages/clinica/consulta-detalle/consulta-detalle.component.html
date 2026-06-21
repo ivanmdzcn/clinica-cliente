@@ -1,0 +1,221 @@
+<div class="page-container">
+
+    @if (cargando()) {
+    <div class="loading">
+        <p>Cargando consulta...</p>
+    </div>
+    }
+
+    @if (!cargando() && consulta()) {
+
+    <div class="page-header">
+        <div class="header-left">
+            <button mat-icon-button (click)="volver()" matTooltip="Volver">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div>
+                <h1 class="page-title">
+                    <mat-icon>event_note</mat-icon>
+                    Consulta Médica
+                </h1>
+                <p class="page-subtitle">
+                    {{ consulta()!.nombrePaciente }}
+                    — {{ consulta()!.fechaConsulta | date:'dd/MM/yyyy HH:mm' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="header-acciones">
+            @if (obtenerEstado(consulta()!.estado); as e) {
+            <div class="chip-estado" [style.background-color]="e.bg" [style.color]="e.color">
+                {{ e.label }}
+            </div>
+            }
+
+            @if (!esCerrada) {
+            <button *appPermiso="'consultas.actualizar'" mat-stroked-button (click)="activarEdicion()">
+                <mat-icon>edit</mat-icon>
+                Editar
+            </button>
+
+            <button *appPermiso="'consultas.actualizar'" mat-raised-button color="warn" (click)="confirmarCerrar()"
+                [disabled]="guardando()">
+                <mat-icon>lock</mat-icon>
+                Cerrar Consulta
+            </button>
+            }
+        </div>
+    </div>
+
+    <mat-card class="info-card">
+        <mat-card-content>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Paciente</span>
+                    <span class="info-valor">{{ consulta()!.nombrePaciente }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Médico</span>
+                    <span class="info-valor">{{ consulta()!.nombreMedico }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Especialidad</span>
+                    <span class="info-valor">{{ consulta()!.especialidadMedico ?? '—' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tipo</span>
+                    <span class="info-valor">
+                        {{ obtenerLabelTipo(consulta()!.tipoConsulta) }}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Fecha</span>
+                    <span class="info-valor">
+                        {{ consulta()!.fechaConsulta | date:'dd/MM/yyyy HH:mm' }}
+                    </span>
+                </div>
+                @if (consulta()!.proximaCita) {
+                <div class="info-item">
+                    <span class="info-label">Próxima Cita</span>
+                    <span class="info-valor proxima">
+                        <mat-icon>event</mat-icon>
+                        {{ consulta()!.proximaCita | date:'dd/MM/yyyy' }}
+                    </span>
+                </div>
+                }
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-tab-group animationDuration="150ms" class="consulta-tabs">
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">description</mat-icon>
+                General
+            </ng-template>
+
+            <div class="tab-content">
+
+                <mat-card class="detalle-card">
+                    <mat-card-header>
+                        <mat-card-title>Motivo de Consulta</mat-card-title>
+                    </mat-card-header>
+                    <mat-divider />
+                    <mat-card-content>
+                        <p class="texto-consulta">{{ consulta()!.motivoConsulta }}</p>
+                    </mat-card-content>
+                </mat-card>
+
+                @if (consulta()!.evolucionTratamiento) {
+                <mat-card class="detalle-card">
+                    <mat-card-header>
+                        <mat-card-title>Evolución y Tratamiento</mat-card-title>
+                    </mat-card-header>
+                    <mat-divider />
+                    <mat-card-content>
+                        <p class="texto-consulta">
+                            {{ consulta()!.evolucionTratamiento }}
+                        </p>
+                    </mat-card-content>
+                </mat-card>
+                }
+
+                @if (consulta()!.observaciones) {
+                <mat-card class="detalle-card">
+                    <mat-card-header>
+                        <mat-card-title>Observaciones</mat-card-title>
+                    </mat-card-header>
+                    <mat-divider />
+                    <mat-card-content>
+                        <p class="texto-consulta">{{ consulta()!.observaciones }}</p>
+                    </mat-card-content>
+                </mat-card>
+                }
+
+            </div>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">monitor_heart</mat-icon>
+                Signos Vitales
+                @if (totalSignosVitales() > 0) {
+                <span class="tab-badge">({{ totalSignosVitales() }})</span>
+                }
+            </ng-template>
+
+            <app-signos-vitales-tab [idConsulta]="idConsulta()" [esCerrada]="esCerrada"
+                (onCountChange)="totalSignosVitales.set($event)">
+            </app-signos-vitales-tab>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">diagnosis</mat-icon>
+                Diagnósticos
+                @if (totalDiagnosticos() > 0) {
+                <span class="tab-badge">({{ totalDiagnosticos() }})</span>
+                }
+            </ng-template>
+
+            <app-diagnosticos-tab [idConsulta]="idConsulta()" [esCerrada]="esCerrada"
+                (onCountChange)="totalDiagnosticos.set($event)">
+            </app-diagnosticos-tab>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">healing</mat-icon>
+                Tratamientos
+                @if (totalTratamientos() > 0) {
+                <span class="tab-badge">({{ totalTratamientos() }})</span>
+                }
+            </ng-template>
+
+            <app-tratamientos-tab [idConsulta]="idConsulta()" [esCerrada]="esCerrada"
+                (onCountChange)="totalTratamientos.set($event)">
+            </app-tratamientos-tab>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">biotech</mat-icon>
+                Laboratorio
+                @if (totalOrdenesLab() > 0) {
+                <span class="tab-badge">({{ totalOrdenesLab() }})</span>
+                }
+            </ng-template>
+
+            <app-laboratorio-tab
+                [idConsulta]="idConsulta()"
+                [esCerrada]="esCerrada"
+                [idMedico]="consulta()!.idMedico"
+                [idPaciente]="consulta()!.idPaciente"
+                (onCountChange)="totalOrdenesLab.set($event)">
+            </app-laboratorio-tab>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">receipt_long</mat-icon>
+                Recetas
+                @if (totalRecetas() > 0) {
+                <span class="tab-badge">({{ totalRecetas() }})</span>
+                }
+            </ng-template>
+
+            <app-recetas-tab
+                [idConsulta]="idConsulta()"
+                [esCerrada]="esCerrada"
+                [idMedico]="consulta()!.idMedico"
+                [idPaciente]="consulta()!.idPaciente"
+                (onCountChange)="totalRecetas.set($event)">
+            </app-recetas-tab>
+        </mat-tab>
+
+    </mat-tab-group>
+
+    }
+
+</div>

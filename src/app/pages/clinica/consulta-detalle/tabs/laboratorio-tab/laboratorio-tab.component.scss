@@ -1,0 +1,170 @@
+// Estructura interna de la pestaña
+.tab-content {
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tab-header-signos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tab-titulo {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a237e;
+    margin: 0;
+}
+
+// Vista vacía sin datos
+.sin-datos-signos {
+    text-align: center;
+    padding: 3rem;
+    color: #aaa;
+
+    mat-icon {
+        font-size: 3rem;
+        width: 3rem;
+        height: 3rem;
+        display: block;
+        margin: 0 auto 0.5rem;
+    }
+    p { margin: 0; font-size: 1rem; }
+}
+
+// Órdenes de laboratorio
+.orden-lab-card {
+    border-radius: 10px !important;
+    border-left: 4px solid #00897b;
+    transition: box-shadow 0.2s;
+
+    &:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; }
+    &.urgente { border-left-color: #d32f2f; }
+}
+
+.orden-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.orden-info-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.urgente-icon {
+    color: #d32f2f;
+    font-size: 1.2rem;
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.numero-orden {
+    background: #e0f2f1;
+    color: #00695c;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.orden-fecha {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.chip-estado-orden {
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.codigo-cie-orden {
+    background: #3f51b5;
+    color: white;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+// Exámenes en la orden
+.examenes-orden {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.examen-detalle-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.5rem;
+    background: #f5f5f5;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.codigo-ex-small {
+    background: #c8e6c9;
+    color: #1b5e20;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.examen-nombre { flex: 1; }
+
+.estado-detalle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.resultados-count {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.75rem;
+    color: #388e3c;
+    flex-shrink: 0;
+    mat-icon { font-size: 0.85rem; width: 0.85rem; height: 0.85rem; }
+}
+
+.orden-obs {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: #555;
+    margin: 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid #f0f0f0;
+
+    mat-icon {
+        font-size: 0.9rem;
+        width: 0.9rem;
+        height: 0.9rem;
+        color: #aaa;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+}
+
+.orden-acciones {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-shrink: 0;
+}

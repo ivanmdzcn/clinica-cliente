@@ -1,0 +1,201 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <mat-icon>event_note</mat-icon>
+                Consultas Médicas
+            </h1>
+            <p class="page-subtitle">Historial general de consultas</p>
+        </div>
+        <button *appPermiso="'consultas.crear'" mat-raised-button color="primary" (click)="abrirNuevo()">
+            <mat-icon>add</mat-icon>
+            Nueva Consulta
+        </button>
+    </div>
+
+    <!-- Filtros -->
+    <mat-card class="filtros-card">
+        <mat-card-content>
+            <div class="filtros-grid">
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Paciente</mat-label>
+                    <mat-select [(ngModel)]="filtroPaciente" (selectionChange)="aplicarFiltros()">
+                        <mat-option value="">Todos</mat-option>
+                        @for (p of pacientes(); track p.idPaciente) {
+                        <mat-option [value]="p.idPaciente.toString()">
+                            {{ p.nombreCompleto }}
+                        </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Médico</mat-label>
+                    <mat-select [(ngModel)]="filtroMedico" (selectionChange)="aplicarFiltros()">
+                        <mat-option value="">Todos</mat-option>
+                        @for (m of medicos(); track m.idMedico) {
+                        <mat-option [value]="m.idMedico.toString()">
+                            {{ m.nombreUsuario }}
+                        </mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                    <mat-label>Estado</mat-label>
+                    <mat-select [(ngModel)]="filtroEstado" (selectionChange)="aplicarFiltros()">
+                        <mat-option value="">Todos</mat-option>
+                        @for (e of estadosConsulta; track e.value) {
+                        <mat-option [value]="e.value">{{ e.label }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+
+                <button mat-stroked-button (click)="limpiarFiltros()" class="btn-limpiar">
+                    <mat-icon>clear</mat-icon>
+                    Limpiar
+                </button>
+
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Tabla -->
+    <mat-card class="table-card">
+        <mat-card-content>
+
+            <table mat-table [dataSource]="dataSource" matSort class="w-100">
+
+                <!-- Fecha -->
+                <ng-container matColumnDef="fecha">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+                    <td mat-cell *matCellDef="let row">
+                        {{ row.fechaConsulta | date:'dd/MM/yyyy HH:mm' }}
+                    </td>
+                </ng-container>
+
+                <!-- Paciente -->
+                <ng-container matColumnDef="paciente">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Paciente</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="persona-col">
+                            <mat-icon class="persona-icon">account_circle</mat-icon>
+                            <span>{{ row.nombrePaciente }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Médico -->
+                <ng-container matColumnDef="medico">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Médico</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="medico-col">
+                            <span>{{ row.nombreMedico }}</span>
+                            @if (row.especialidadMedico) {
+                            <small>{{ row.especialidadMedico }}</small>
+                            }
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Tipo -->
+                <ng-container matColumnDef="tipo">
+                    <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                    <td mat-cell *matCellDef="let row">
+                        @if (row.tipoConsulta) {
+                        <mat-chip class="chip-tipo">
+                            {{ obtenerLabelTipo(row.tipoConsulta) }}
+                        </mat-chip>
+                        } @else {
+                        <span class="sin-tipo">—</span>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Motivo -->
+                <ng-container matColumnDef="motivo">
+                    <th mat-header-cell *matHeaderCellDef>Motivo</th>
+                    <td mat-cell *matCellDef="let row">
+                        <span class="motivo-texto">{{ row.motivoConsulta }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Estado -->
+                <ng-container matColumnDef="estado">
+                    <th mat-header-cell *matHeaderCellDef>Estado</th>
+                    <td mat-cell *matCellDef="let row">
+                        @if (obtenerEstado(row.estado); as e) {
+                        <div class="chip-estado" [style.background-color]="e.bg" [style.color]="e.color">
+                            {{ e.label }}
+                        </div>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Acciones -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                    <td mat-cell *matCellDef="let row">
+                        <div class="acciones">
+
+                            <!-- Historia clínica -->
+                            <button *appPermiso="'pacientes.leer'" mat-icon-button color="primary"
+                                matTooltip="Ver historia clínica" (click)="verHistoria(row)">
+                                <mat-icon>medical_services</mat-icon>
+                            </button>
+
+                            <!-- Editar -->
+                            @if (row.estado !== 'cerrada') {
+                            <button *appPermiso="'consultas.actualizar'" mat-icon-button color="primary"
+                                matTooltip="Editar" (click)="abrirEdicion(row)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+
+                            <!-- Cambiar estado -->
+                            <button *appPermiso="'consultas.actualizar'" mat-icon-button color="accent"
+                                matTooltip="Cambiar estado" (click)="abrirCambioEstado(row)">
+                                <mat-icon>update</mat-icon>
+                            </button>
+                            }
+
+                            <!-- Eliminar -->
+                            @if (row.estado === 'abierta') {
+                            <button *appPermiso="'consultas.eliminar'" mat-icon-button color="warn"
+                                matTooltip="Eliminar" (click)="confirmarEliminar(row)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                            }
+
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;" [class.fila-cerrada]="row.estado === 'cerrada'">
+                </tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell sin-datos" [attr.colspan]="columnas.length">
+                        <mat-icon>event_busy</mat-icon>
+                        <p>No se encontraron consultas</p>
+                    </td>
+                </tr>
+
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons />
+
+        </mat-card-content>
+    </mat-card>
+
+    <!-- --Cargando -->
+    @if (cargando() && dataSource.data.length === 0) {
+    <div class="loader-overlay">
+        <div class="neon-ring"></div>
+    </div>
+    }
+
+</div>

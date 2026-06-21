@@ -1,0 +1,402 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div class="header-left">
+            <button mat-icon-button (click)="volver()" matTooltip="Volver a pacientes">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div>
+                <h1 class="page-title">
+                    <mat-icon>medical_services</mat-icon>
+                    Historia Clínica
+                </h1>
+                @if (paciente()) {
+                    <p class="page-subtitle">
+                        {{ paciente()!.nombreCompleto }}
+                        @if (paciente()!.tipoSangre) {
+                            <mat-chip class="chip-sangre">
+                                {{ paciente()!.tipoSangre }}
+                            </mat-chip>
+                        }
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Info básica del paciente -->
+    @if (paciente()) {
+        <mat-card class="paciente-card">
+            <mat-card-content>
+                <div class="paciente-grid">
+                    <div class="paciente-dato">
+                        <span class="dato-label">DPI</span>
+                        <span class="dato-valor">{{ paciente()!.dpi ?? '—' }}</span>
+                    </div>
+                    <div class="paciente-dato">
+                        <span class="dato-label">Fecha Nacimiento</span>
+                        <span class="dato-valor">
+                            {{ paciente()!.fechaNacimiento | date:'dd/MM/yyyy' }}
+                        </span>
+                    </div>
+                    <div class="paciente-dato">
+                        <span class="dato-label">Sexo</span>
+                        <span class="dato-valor">{{ paciente()!.sexo | titlecase }}</span>
+                    </div>
+                    <div class="paciente-dato">
+                        <span class="dato-label">Teléfono</span>
+                        <span class="dato-valor">{{ paciente()!.telefono ?? '—' }}</span>
+                    </div>
+                    <div class="paciente-dato">
+                        <span class="dato-label">Email</span>
+                        <span class="dato-valor">{{ paciente()!.email ?? '—' }}</span>
+                    </div>
+                    <div class="paciente-dato">
+                        <span class="dato-label">Emergencia</span>
+                        <span class="dato-valor">
+                            {{ paciente()!.nombreEmergencia ?? '—' }}
+                            @if (paciente()!.telefonoEmergencia) {
+                                — {{ paciente()!.telefonoEmergencia }}
+                            }
+                        </span>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    }
+
+    <!-- Tabs de historia clínica -->
+    <mat-tab-group animationDuration="150ms" class="historia-tabs">
+
+        <!-- TAB: Alergias -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">warning</mat-icon>
+                Alergias ({{ alergias().length }})
+            </ng-template>
+
+            <div class="tab-content">
+
+                <div class="tab-header">
+                    <h3 class="tab-titulo">Alergias registradas</h3>
+                    <button
+                        *appPermiso="'pacientes.crear'"
+                        mat-raised-button color="primary"
+                        (click)="abrirFormAlergia()">
+                        <mat-icon>add</mat-icon>
+                        Nueva Alergia
+                    </button>
+                </div>
+
+                @if (alergias().length === 0) {
+                    <div class="sin-datos">
+                        <mat-icon>check_circle</mat-icon>
+                        <p>No se han registrado alergias</p>
+                    </div>
+                } @else {
+                    <div class="alergias-lista">
+                        @for (alergia of alergias(); track alergia.idAlergia) {
+                            <mat-card class="alergia-card"
+                                      [style.border-left-color]="obtenerColorSeveridad(alergia.severidad)">
+                                <mat-card-content>
+                                    <div class="alergia-content">
+                                        <div class="alergia-info">
+                                            <div class="alergia-header">
+                                                <mat-icon class="alergia-icon">warning</mat-icon>
+                                                <strong>{{ alergia.medicamentoOElemento }}</strong>
+                                                <mat-chip class="chip-severidad"
+                                                    [style.background-color]="obtenerColorSeveridad(alergia.severidad) + '22'"
+                                                    [style.color]="obtenerColorSeveridad(alergia.severidad)">
+                                                    {{ obtenerLabelSeveridad(alergia.severidad) }}
+                                                </mat-chip>
+                                            </div>
+                                            @if (alergia.reaccion) {
+                                                <p class="alergia-reaccion">{{ alergia.reaccion }}</p>
+                                            }
+                                            @if (alergia.fechaRegistro) {
+                                                <small class="alergia-fecha">
+                                                    Registrado: {{ alergia.fechaRegistro | date:'dd/MM/yyyy' }}
+                                                </small>
+                                            }
+                                        </div>
+                                        <div class="alergia-acciones">
+                                            <button
+                                                *appPermiso="'pacientes.actualizar'"
+                                                mat-icon-button color="primary"
+                                                matTooltip="Editar"
+                                                (click)="editarAlergia(alergia)">
+                                                <mat-icon>edit</mat-icon>
+                                            </button>
+                                            <button
+                                                *appPermiso="'pacientes.eliminar'"
+                                                mat-icon-button color="warn"
+                                                matTooltip="Eliminar"
+                                                (click)="confirmarEliminarAlergia(alergia)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        }
+                    </div>
+                }
+
+            </div>
+        </mat-tab>
+
+        <!-- TAB: Antecedentes -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">history</mat-icon>
+                Antecedentes ({{ antecedentes().length }})
+            </ng-template>
+
+            <div class="tab-content">
+
+                <div class="tab-header">
+                    <h3 class="tab-titulo">Antecedentes registrados</h3>
+                    <button
+                        *appPermiso="'pacientes.crear'"
+                        mat-raised-button color="primary"
+                        (click)="abrirFormAntecedente()">
+                        <mat-icon>add</mat-icon>
+                        Nuevo Antecedente
+                    </button>
+                </div>
+
+                @if (antecedentes().length === 0) {
+                    <div class="sin-datos">
+                        <mat-icon>check_circle</mat-icon>
+                        <p>No se han registrado antecedentes</p>
+                    </div>
+                } @else {
+
+                    @if (obtenerAntecedentesPorTipo('personal').length > 0) {
+                        <div class="tipo-section">
+                            <div class="tipo-header">
+                                <mat-icon>person</mat-icon>
+                                <h4>Personales</h4>
+                                <span class="tipo-count">
+                                    {{ obtenerAntecedentesPorTipo('personal').length }}
+                                </span>
+                            </div>
+                            <div class="antecedentes-lista">
+                                @for (ant of obtenerAntecedentesPorTipo('personal'); track ant.idAntecedente) {
+                                    <mat-card class="antecedente-card personal">
+                                        <mat-card-content>
+                                            <div class="antecedente-content">
+                                                <div class="antecedente-info">
+                                                    <strong>{{ ant.condicion }}</strong>
+                                                    @if (ant.descripcion) {
+                                                        <p class="antecedente-desc">{{ ant.descripcion }}</p>
+                                                    }
+                                                    @if (ant.fechaRegistro) {
+                                                        <small class="antecedente-fecha">
+                                                            {{ ant.fechaRegistro | date:'dd/MM/yyyy' }}
+                                                        </small>
+                                                    }
+                                                </div>
+                                                <div class="antecedente-acciones">
+                                                    <button
+                                                        *appPermiso="'pacientes.actualizar'"
+                                                        mat-icon-button color="primary"
+                                                        matTooltip="Editar"
+                                                        (click)="editarAntecedente(ant)">
+                                                        <mat-icon>edit</mat-icon>
+                                                    </button>
+                                                    <button
+                                                        *appPermiso="'pacientes.eliminar'"
+                                                        mat-icon-button color="warn"
+                                                        matTooltip="Eliminar"
+                                                        (click)="confirmarEliminarAntecedente(ant)">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </mat-card-content>
+                                    </mat-card>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (obtenerAntecedentesPorTipo('familiar').length > 0) {
+                        <div class="tipo-section">
+                            <div class="tipo-header">
+                                <mat-icon>family_restroom</mat-icon>
+                                <h4>Familiares</h4>
+                                <span class="tipo-count">
+                                    {{ obtenerAntecedentesPorTipo('familiar').length }}
+                                </span>
+                            </div>
+                            <div class="antecedentes-lista">
+                                @for (ant of obtenerAntecedentesPorTipo('familiar'); track ant.idAntecedente) {
+                                    <mat-card class="antecedente-card familiar">
+                                        <mat-card-content>
+                                            <div class="antecedente-content">
+                                                <div class="antecedente-info">
+                                                    <strong>{{ ant.condicion }}</strong>
+                                                    @if (ant.descripcion) {
+                                                        <p class="antecedente-desc">{{ ant.descripcion }}</p>
+                                                    }
+                                                    @if (ant.fechaRegistro) {
+                                                        <small class="antecedente-fecha">
+                                                            {{ ant.fechaRegistro | date:'dd/MM/yyyy' }}
+                                                        </small>
+                                                    }
+                                                </div>
+                                                <div class="antecedente-acciones">
+                                                    <button
+                                                        *appPermiso="'pacientes.actualizar'"
+                                                        mat-icon-button color="primary"
+                                                        matTooltip="Editar"
+                                                        (click)="editarAntecedente(ant)">
+                                                        <mat-icon>edit</mat-icon>
+                                                    </button>
+                                                    <button
+                                                        *appPermiso="'pacientes.eliminar'"
+                                                        mat-icon-button color="warn"
+                                                        matTooltip="Eliminar"
+                                                        (click)="confirmarEliminarAntecedente(ant)">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </mat-card-content>
+                                    </mat-card>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+        </mat-tab>
+
+        <!-- TAB: Consultas -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">event_note</mat-icon>
+                Consultas ({{ consultas().length }})
+            </ng-template>
+
+            <div class="tab-content">
+
+                <div class="tab-header">
+                    <h3 class="tab-titulo">Historial de consultas</h3>
+                    <button
+                        *appPermiso="'consultas.crear'"
+                        mat-raised-button color="primary"
+                        (click)="abrirFormConsulta()">
+                        <mat-icon>add</mat-icon>
+                        Nueva Consulta
+                    </button>
+                </div>
+
+                <!-- Tabla de consultas -->
+                @if (consultas().length === 0) {
+                    <div class="sin-datos">
+                        <mat-icon>event_note</mat-icon>
+                        <p>No hay consultas registradas</p>
+                    </div>
+                } @else {
+                    <table mat-table [dataSource]="consultas()" class="consultas-tabla">
+
+                        <ng-container matColumnDef="fecha">
+                            <th mat-header-cell *matHeaderCellDef>Fecha</th>
+                            <td mat-cell *matCellDef="let row">
+                                {{ row.fechaConsulta | date:'dd/MM/yyyy HH:mm' }}
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="medico">
+                            <th mat-header-cell *matHeaderCellDef>Médico</th>
+                            <td mat-cell *matCellDef="let row">
+                                <div class="medico-col">
+                                    <span>{{ row.nombreMedico }}</span>
+                                    @if (row.especialidadMedico) {
+                                        <small>{{ row.especialidadMedico }}</small>
+                                    }
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="tipo">
+                            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+                            <td mat-cell *matCellDef="let row">
+                                @if (row.tipoConsulta) {
+                                    <mat-chip class="chip-tipo">
+                                        {{ obtenerLabelTipoConsulta(row.tipoConsulta) }}
+                                    </mat-chip>
+                                } @else {
+                                    <span>—</span>
+                                }
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="motivo">
+                            <th mat-header-cell *matHeaderCellDef>Motivo</th>
+                            <td mat-cell *matCellDef="let row">
+                                <span class="motivo-texto">{{ row.motivoConsulta }}</span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="estado">
+                            <th mat-header-cell *matHeaderCellDef>Estado</th>
+                            <td mat-cell *matCellDef="let row">
+                                @if (obtenerEstadoConsulta(row.estado); as e) {
+                                    <div class="chip-estado-consulta"
+                                         [style.background-color]="e.bg"
+                                         [style.color]="e.color">
+                                        {{ e.label }}
+                                    </div>
+                                }
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="acciones">
+                            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                            <td mat-cell *matCellDef="let row">
+                                <div class="acciones">
+                                    <button
+                                        mat-icon-button color="primary"
+                                        matTooltip="Ver detalle"
+                                        (click)="verDetalleConsulta(row)">
+                                        <mat-icon>open_in_new</mat-icon>
+                                    </button>
+                                    <button
+                                        *appPermiso="'consultas.actualizar'"
+                                        mat-icon-button color="primary"
+                                        matTooltip="Editar"
+                                        (click)="editarConsulta(row)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    @if (row.estado === 'abierta') {
+                                        <button
+                                            *appPermiso="'consultas.eliminar'"
+                                            mat-icon-button color="warn"
+                                            matTooltip="Eliminar"
+                                            (click)="confirmarEliminarConsulta(row)">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="columnasConsulta"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasConsulta;"
+                            [class.fila-cerrada]="row.estado === 'cerrada'">
+                        </tr>
+
+                    </table>
+                }
+
+            </div>
+        </mat-tab>
+
+    </mat-tab-group>
+
+</div>

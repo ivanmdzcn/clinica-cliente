@@ -1,0 +1,105 @@
+<div class="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-logo" (click)="irAlDashboard()" style="cursor: pointer;">
+        <mat-icon class="logo-icon">shield</mat-icon>
+        <span class="logo-text">{{ nombreEmpresa() || 'Mi Empresa' }}</span>
+    </div>
+
+    <mat-divider />
+
+    @if (cargando()) {
+        <div class="sidebar-loading">
+            <span>Cargando menú...</span>
+        </div>
+    }
+
+    @for (modulo of modulos(); track modulo.idModulo) {
+        <div class="modulo-section">
+
+            <p class="modulo-titulo">{{ modulo.nombreModulo }}</p>
+
+            <mat-nav-list class="nav-list">
+                @for (menu of modulo.menus; track menu.idMenu) {
+
+                    @if (tieneHijos(menu)) {
+                        <!-- NIVEL 1 CON hijos → expansion panel -->
+                        <mat-expansion-panel
+                            class="menu-expansion"
+                            [expanded]="estaActivoArbol(menu)">
+                            <mat-expansion-panel-header>
+                                <mat-panel-title class="menu-item-title">
+                                    <mat-icon class="menu-icon">
+                                        {{ menu.icono ?? 'folder' }}
+                                    </mat-icon>
+                                    {{ menu.nombre }}
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            @for (hijo of menu.hijos; track hijo.idMenu) {
+
+                                @if (tieneHijos(hijo)) {
+                                    <!-- NIVEL 2 CON hijos → expansion anidado -->
+                                    <mat-expansion-panel
+                                        class="menu-expansion-nested"
+                                        [expanded]="estaActivoArbol(hijo)">
+                                        <mat-expansion-panel-header>
+                                            <mat-panel-title class="menu-item-title-nested">
+                                                <mat-icon class="menu-icon-nested">
+                                                    {{ hijo.icono ?? 'folder_open' }}
+                                                </mat-icon>
+                                                {{ hijo.nombre }}
+                                            </mat-panel-title>
+                                        </mat-expansion-panel-header>
+
+                                        <!-- NIVEL 3 → siempre hoja -->
+                                        @for (nieto of hijo.hijos; track nieto.idMenu) {
+                                            <mat-list-item
+                                                class="nieto-item"
+                                                [class.active]="estaActivo(nieto.ruta)"
+                                                (click)="navegarA(nieto.ruta)">
+                                                <mat-icon matListItemIcon class="nieto-icon">
+                                                    {{ nieto.icono ?? 'chevron_right' }}
+                                                </mat-icon>
+                                                <span matListItemTitle>{{ nieto.nombre }}</span>
+                                            </mat-list-item>
+                                        }
+
+                                    </mat-expansion-panel>
+
+                                } @else {
+                                    <!-- NIVEL 2 SIN hijos → submenu-item -->
+                                    <mat-list-item
+                                        class="submenu-item"
+                                        [class.active]="estaActivo(hijo.ruta)"
+                                        (click)="navegarA(hijo.ruta)">
+                                        <mat-icon matListItemIcon class="submenu-icon">
+                                            {{ hijo.icono ?? 'chevron_right' }}
+                                        </mat-icon>
+                                        <span matListItemTitle>{{ hijo.nombre }}</span>
+                                    </mat-list-item>
+                                }
+
+                            }
+
+                        </mat-expansion-panel>
+
+                    } @else {
+                        <!-- NIVEL 1 SIN hijos → div raíz -->
+                        <div
+                            class="menu-item-root"
+                            [class.active]="estaActivo(menu.ruta)"
+                            (click)="navegarA(menu.ruta)">
+                            <mat-icon>{{ menu.icono ?? 'circle' }}</mat-icon>
+                            <span>{{ menu.nombre }}</span>
+                        </div>
+                    }
+
+                }
+            </mat-nav-list>
+        </div>
+
+        <mat-divider />
+    }
+
+</div>

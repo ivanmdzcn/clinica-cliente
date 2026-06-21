@@ -1,0 +1,10 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem 0;
+
+    .col-span-2 {
+        grid-column: 1 / -1;
+    }
+}

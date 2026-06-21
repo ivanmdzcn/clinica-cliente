@@ -1,0 +1,355 @@
+<div class="page-container">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">
+                <mat-icon>business</mat-icon>
+                Configuración de Empresa
+            </h1>
+            <p class="page-subtitle">Información y configuración general del sistema</p>
+        </div>
+        <div class="header-buttons">
+            <button mat-raised-button routerLink="/dashboard">
+                <mat-icon>arrow_back</mat-icon>
+                Volver
+            </button>
+            <button *appPermiso="'empresa.actualizar'" mat-raised-button color="primary"
+                [disabled]="guardando() || cargando()" (click)="guardar()">
+                @if (guardando()) {
+                <mat-spinner diameter="20" />
+                } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    Guardar Cambios
+                </ng-container>
+                }
+            </button>
+        </div>
+    </div>
+
+    <!-- Cargando -->
+    <!-- @if (cargando()) {
+    <div class="loading-container">
+        <mat-spinner diameter="48" />
+        <p>Cargando configuración...</p>
+    </div>
+    } -->
+    <!-- Cargando -->
+    @if (cargando()) {
+    <div class="loader-overlay">
+        <div class="neon-ring"></div>
+    </div>
+    }
+
+    <!-- Formulario con tabs -->
+    @if (!cargando()) {
+    <form [formGroup]="form">
+        <mat-tab-group animationDuration="200ms" class="config-tabs">
+
+            <!-- TAB 1: Información General -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">info</mat-icon>
+                    Info General
+                </ng-template>
+
+                <mat-card class="tab-card">
+                    <mat-card-content>
+                        <div class="form-grid">
+
+                            <mat-form-field appearance="outline" class="col-span-2">
+                                <mat-label>Razón Social *</mat-label>
+                                <input matInput formControlName="razonSocial">
+                                <mat-icon matSuffix>business</mat-icon>
+                                @if (form.get('razonSocial')!.hasError('required') && form.get('razonSocial')!.touched)
+                                {
+                                <mat-error>La razón social es obligatoria</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Nombre Comercial</mat-label>
+                                <input matInput formControlName="nombreComercial">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>NIT / Identificación Fiscal</mat-label>
+                                <input matInput formControlName="numeroIdentificacionFiscal">
+                                <mat-icon matSuffix>badge</mat-icon>
+                            </mat-form-field>
+
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-tab>
+
+            <!-- TAB 2: Ubicación -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">location_on</mat-icon>
+                    Ubicación
+                </ng-template>
+
+                <mat-card class="tab-card">
+                    <mat-card-content>
+                        <div class="form-grid">
+
+                            <mat-form-field appearance="outline" class="col-span-2">
+                                <mat-label>Dirección *</mat-label>
+                                <textarea matInput formControlName="direccion" rows="3"></textarea>
+                                <mat-icon matSuffix>home</mat-icon>
+                                @if (form.get('direccion')!.hasError('required') && form.get('direccion')!.touched) {
+                                <mat-error>La dirección es obligatoria</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Ciudad</mat-label>
+                                <input matInput formControlName="ciudad">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Estado / Provincia</mat-label>
+                                <input matInput formControlName="estadoProvincia">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>País *</mat-label>
+                                <input matInput formControlName="pais">
+                                <mat-icon matSuffix>flag</mat-icon>
+                                @if (form.get('pais')!.hasError('required') && form.get('pais')!.touched) {
+                                <mat-error>El país es obligatorio</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Código Postal</mat-label>
+                                <input matInput formControlName="codigoPostal">
+                            </mat-form-field>
+
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-tab>
+
+            <!-- TAB 3: Contacto -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">contact_phone</mat-icon>
+                    Contacto
+                </ng-template>
+
+                <mat-card class="tab-card">
+                    <mat-card-content>
+                        <div class="form-grid">
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Teléfono Principal</mat-label>
+                                <input matInput formControlName="telefonoPrincipal">
+                                <mat-icon matSuffix>phone</mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Teléfono Secundario</mat-label>
+                                <input matInput formControlName="telefonoSecundario">
+                                <mat-icon matSuffix>phone</mat-icon>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Email Principal *</mat-label>
+                                <input matInput formControlName="emailPrincipal" type="email">
+                                <mat-icon matSuffix>email</mat-icon>
+                                @if (form.get('emailPrincipal')!.hasError('required') &&
+                                form.get('emailPrincipal')!.touched) {
+                                <mat-error>El email es obligatorio</mat-error>
+                                }
+                                @if (form.get('emailPrincipal')!.hasError('email') &&
+                                form.get('emailPrincipal')!.touched) {
+                                <mat-error>Email inválido</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Email Secundario</mat-label>
+                                <input matInput formControlName="emailSecundario" type="email">
+                                <mat-icon matSuffix>email</mat-icon>
+                                @if (form.get('emailSecundario')!.hasError('email') &&
+                                form.get('emailSecundario')!.touched) {
+                                <mat-error>Email inválido</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-span-2">
+                                <mat-label>Sitio Web</mat-label>
+                                <input matInput formControlName="sitioWeb" placeholder="https://...">
+                                <mat-icon matSuffix>language</mat-icon>
+                            </mat-form-field>
+
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-tab>
+
+            <!-- TAB 4: Moneda -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">attach_money</mat-icon>
+                    Moneda
+                </ng-template>
+
+                <mat-card class="tab-card">
+                    <mat-card-content>
+                        <div class="form-grid">
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Código de Moneda *</mat-label>
+                                <input matInput formControlName="codigoMoneda" placeholder="GTQ">
+                                @if (form.get('codigoMoneda')!.hasError('required') &&
+                                form.get('codigoMoneda')!.touched) {
+                                <mat-error>El código es obligatorio</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Símbolo *</mat-label>
+                                <input matInput formControlName="simboloMoneda" placeholder="Q">
+                                @if (form.get('simboloMoneda')!.hasError('required') &&
+                                form.get('simboloMoneda')!.touched) {
+                                <mat-error>El símbolo es obligatorio</mat-error>
+                                }
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Nombre de la Moneda</mat-label>
+                                <input matInput formControlName="nombreMoneda" placeholder="Quetzal">
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Posición del Símbolo</mat-label>
+                                <mat-select formControlName="posicionSimbolo">
+                                    <mat-option value="antes">Antes del número (Q1,234.00)</mat-option>
+                                    <mat-option value="despues">Después del número (1,234.00Q)</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Separador de Miles</mat-label>
+                                <mat-select formControlName="separadorMiles">
+                                    <mat-option value=",">, (coma)</mat-option>
+                                    <mat-option value=".">. (punto)</mat-option>
+                                    <mat-option value=" "> (espacio)</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Separador de Decimales</mat-label>
+                                <mat-select formControlName="separadorDecimales">
+                                    <mat-option value=".">. (punto)</mat-option>
+                                    <mat-option value=",">, (coma)</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline">
+                                <mat-label>Decimales</mat-label>
+                                <mat-select formControlName="decimales">
+                                    <mat-option [value]="0">0</mat-option>
+                                    <mat-option [value]="1">1</mat-option>
+                                    <mat-option [value]="2">2</mat-option>
+                                    <mat-option [value]="3">3</mat-option>
+                                    <mat-option [value]="4">4</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+
+                            <!-- Preview -->
+                            <div class="preview-moneda col-span-2">
+                                <span class="preview-label">Vista previa:</span>
+                                <span class="preview-valor">{{ previewMoneda }}</span>
+                            </div>
+
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-tab>
+
+            <!-- TAB 5: Apariencia -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">palette</mat-icon>
+                    Apariencia
+                </ng-template>
+
+                <mat-card class="tab-card">
+                    <mat-card-content>
+                        <div class="form-grid">
+
+                            <mat-form-field appearance="outline" class="col-span-2">
+                                <mat-label>URL del Logo</mat-label>
+                                <input matInput formControlName="logoUrl" placeholder="https://...">
+                                <mat-icon matSuffix>image</mat-icon>
+                            </mat-form-field>
+
+                            <!-- Preview logo -->
+                            @if (form.get('logoUrl')?.value) {
+                            <div class="logo-preview col-span-2">
+                                <p class="preview-label">Vista previa del logo:</p>
+                                <img [src]="form.get('logoUrl')?.value" alt="Logo" class="logo-img">
+                            </div>
+                            }
+
+                            <div class="color-section">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>Color Primario</mat-label>
+                                    <input matInput formControlName="colorPrimario" placeholder="#3B82F6">
+                                    <mat-icon matSuffix>color_lens</mat-icon>
+                                    @if (form.get('colorPrimario')!.hasError('pattern') &&
+                                    form.get('colorPrimario')!.touched) {
+                                    <mat-error>Formato: #RRGGBB</mat-error>
+                                    }
+                                </mat-form-field>
+
+                                <div class="color-preview" [style.background-color]="colorPreview">
+                                    <span>{{ colorPreview }}</span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-tab>
+
+            <!-- TAB 6: Documentos -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">description</mat-icon>
+                    Documentos
+                </ng-template>
+
+                <mat-card class="tab-card">
+                    <mat-card-content>
+                        <div class="form-grid">
+
+                            <mat-form-field appearance="outline" class="col-span-2">
+                                <mat-label>Pie de Página en Documentos</mat-label>
+                                <textarea matInput formControlName="piePaginaDocumentos" rows="4"
+                                    placeholder="Texto que aparecerá al pie de facturas, reportes...">
+                                    </textarea>
+                            </mat-form-field>
+
+                            <mat-form-field appearance="outline" class="col-span-2">
+                                <mat-label>Mensaje de Agradecimiento</mat-label>
+                                <textarea matInput formControlName="mensajeAgradecimiento" rows="4"
+                                    placeholder="Ej: Gracias por su preferencia...">
+                                    </textarea>
+                            </mat-form-field>
+
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </mat-tab>
+
+        </mat-tab-group>
+    </form>
+    }
+
+</div>

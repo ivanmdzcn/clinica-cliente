@@ -1,0 +1,95 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <h2 mat-dialog-title>
+        <mat-icon>{{ modoEdicion ? 'edit' : 'event_note' }}</mat-icon>
+        {{ modoEdicion ? 'Editar Consulta' : 'Nueva Consulta' }}
+    </h2>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Médico *</mat-label>
+                <mat-select formControlName="idMedico">
+                    @for (m of medicos(); track m.idMedico) {
+                    <mat-option [value]="m.idMedico">
+                        {{ m.nombreUsuario }}
+                        @if (m.especialidadPrincipal) {
+                        — {{ m.especialidadPrincipal }}
+                        }
+                    </mat-option>
+                    }
+                </mat-select>
+                <mat-icon matSuffix>medical_services</mat-icon>
+                @if (form.get('idMedico')!.hasError('required') && form.get('idMedico')!.touched) {
+                <mat-error>El médico es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo de Consulta</mat-label>
+                <mat-select formControlName="tipoConsulta">
+                    <mat-option [value]="null">Sin especificar</mat-option>
+                    @for (t of tiposConsulta; track t.value) {
+                    <mat-option [value]="t.value">{{ t.label }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Motivo de Consulta *</mat-label>
+                <textarea matInput formControlName="motivoConsulta" rows="3"
+                    placeholder="Describa el motivo de la consulta..."></textarea>
+                @if (form.get('motivoConsulta')!.hasError('required') && form.get('motivoConsulta')!.touched) {
+                <mat-error>El motivo es obligatorio</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Evolución y Tratamiento</mat-label>
+                <textarea matInput formControlName="evolucionTratamiento" rows="3"
+                    placeholder="Evolución del paciente y tratamiento indicado..."></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Observaciones</mat-label>
+                <textarea matInput formControlName="observaciones" rows="2"></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Próxima Cita</mat-label>
+                <input matInput [matDatepicker]="pickerProxima" formControlName="proximaCita"
+                    [min]="minFechaConsulta">
+                <mat-datepicker-toggle matSuffix [for]="pickerProxima" />
+                <mat-datepicker #pickerProxima />
+            </mat-form-field>
+
+            @if (modoEdicion) {
+            <mat-form-field appearance="outline">
+                <mat-label>Estado</mat-label>
+                <mat-select formControlName="estado">
+                    @for (e of estadosConsulta; track e.value) {
+                    <mat-option [value]="e.value">{{ e.label }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+            }
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="cargando()">Cancelar</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="cargando()">
+            @if (cargando()) {
+            <mat-spinner diameter="20" />
+            } @else {
+            <ng-container>
+                <mat-icon>save</mat-icon>
+                {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+            </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>

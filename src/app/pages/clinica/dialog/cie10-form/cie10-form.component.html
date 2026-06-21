@@ -1,0 +1,69 @@
+<form [formGroup]="form" (ngSubmit)="guardar()">
+
+    <div mat-dialog-title>
+        <div class="dialog-titulo-principal">
+            <mat-icon>add</mat-icon>
+            Nuevo Código CIE-10 Personalizado
+        </div>
+        <p class="dialog-subtitulo">
+            Solo para diagnósticos no incluidos en el catálogo oficial
+        </p>
+    </div>
+
+    <mat-dialog-content>
+        <div class="form-grid">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Código *</mat-label>
+                <input matInput formControlName="codigo"
+                       placeholder="Ej: A00, A00.1"
+                       style="text-transform: uppercase">
+                <mat-icon matSuffix>tag</mat-icon>
+                @if (form.get('codigo')!.hasError('required')
+                  && form.get('codigo')!.touched) {
+                    <mat-error>El código es obligatorio</mat-error>
+                }
+                @if (form.get('codigo')!.hasError('pattern')
+                  && form.get('codigo')!.touched) {
+                    <mat-error>Formato inválido. Ej: A00, Z99.1</mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Categoría</mat-label>
+                <input matInput formControlName="categoria"
+                       placeholder="Ej: Enfermedades infecciosas">
+                <mat-icon matSuffix>folder</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-span-2">
+                <mat-label>Descripción *</mat-label>
+                <input matInput formControlName="descripcion"
+                       placeholder="Descripción del diagnóstico">
+                <mat-icon matSuffix>description</mat-icon>
+                @if (form.get('descripcion')!.hasError('required')
+                  && form.get('descripcion')!.touched) {
+                    <mat-error>La descripción es obligatoria</mat-error>
+                }
+            </mat-form-field>
+
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="cerrar()" [disabled]="guardando()">
+            Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="guardando()">
+            @if (guardando()) {
+                <mat-spinner diameter="20" />
+            } @else {
+                <ng-container>
+                    <mat-icon>save</mat-icon>
+                    Guardar
+                </ng-container>
+            }
+        </button>
+    </mat-dialog-actions>
+
+</form>
