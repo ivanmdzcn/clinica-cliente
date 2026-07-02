@@ -58,5 +58,39 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 
+**********************************************************************
+** Frontend - Clínica + RBAC (Angular)
+** Despliegue con Docker — Frontend
+** Entorno nuevo (servidor del cliente)
+** Copyright (c) 2026 I.Mendez
+**********************************************************************
+
+## Pre-requisitos
+
+- La red Docker externa `app_network` ya debe existir. Si no existe:
+docker network create app_network
+
 ## Copiar docker-compose-ejemplo.yml
 cp docker-compose-ejemplo.yml docker-compose.yml
+
+## Construir y levantar
+docker compose up -d --build
+
+## Verificar que levantó correctamente
+docker compose ps
+docker compose logs -f client-front
+
+Deberías ver nginx arrancando sin errores:
+/docker-entrypoint.sh: Configuration complete; ready for start up
+... start worker processes
+
+## Operación diaria
+### Aplicar cambios de código
+git pull
+docker compose up -d --build
+
+### Ver logs en tiempo real
+docker compose logs -f client-front
+
+### Detener el contenedor
+docker compose down

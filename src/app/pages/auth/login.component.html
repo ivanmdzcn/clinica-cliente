@@ -1,82 +1,94 @@
-<div class="login-container">
-    <mat-card class="login-card">
+<div class="login-page">
+    <!-- Lado izquierdo: formulario -->
+    <div class="login-side">
+        <svg class="pulse-line" viewBox="0 0 1000 120" preserveAspectRatio="none">
+            <path d="M0,60 L200,60 L230,20 L260,100 L290,60 L1000,60" />
+        </svg>
 
-        <!-- Logo / Título -->
-        <mat-card-header>
-            <div class="login-header">
-                <mat-icon class="login-icon">lock</mat-icon>
-                <h1>Bienvenido</h1>
-                <p>Ingresa tus credenciales para continuar</p>
-            </div>
-        </mat-card-header>
-
-        <mat-card-content>
-            <form [formGroup]="form" (ngSubmit)="login()">
-
-                <!-- Email -->
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Correo electrónico</mat-label>
-                    <input
-                        matInput
-                        type="email"
-                        formControlName="email"
-                        placeholder="usuario@correo.com"
-                        autocomplete="email">
-                    <mat-icon matSuffix>email</mat-icon>
-                    @if (email.hasError('required') && email.touched) {
+        <mat-card class="login-card">
+            <!-- Logo / Título -->
+            <mat-card-header>
+                <div class="login-header">
+                    <mat-icon class="login-icon">lock</mat-icon>
+                    <h1>Bienvenido</h1>
+                    <p>Ingresa tus credenciales para continuar</p>
+                </div>
+            </mat-card-header>
+            <mat-card-content>
+                <form [formGroup]="form" (ngSubmit)="login()">
+                    <!-- Email -->
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Correo electrónico</mat-label>
+                        <input matInput type="email" formControlName="email" placeholder="usuario@correo.com"
+                            autocomplete="email">
+                        <mat-icon matSuffix>email</mat-icon>
+                        @if (email.hasError('required') && email.touched) {
                         <mat-error>El correo es obligatorio</mat-error>
-                    }
-                    @if (email.hasError('email') && email.touched) {
+                        }
+                        @if (email.hasError('email') && email.touched) {
                         <mat-error>Ingresa un correo válido</mat-error>
-                    }
-                </mat-form-field>
-
-                <!-- Contraseña -->
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Contraseña</mat-label>
-                    <input
-                        matInput
-                        [type]="mostrarContrasena() ? 'text' : 'password'"
-                        formControlName="contrasena"
-                        autocomplete="current-password">
-                    <button
-                        mat-icon-button
-                        matSuffix
-                        type="button"
-                        (click)="toggleContrasena()">
-                        <mat-icon>
-                            {{ mostrarContrasena() ? 'visibility_off' : 'visibility' }}
-                        </mat-icon>
-                    </button>
-                    @if (contrasena.hasError('required') && contrasena.touched) {
+                        }
+                    </mat-form-field>
+                    <!-- Contraseña -->
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Contraseña</mat-label>
+                        <input matInput [type]="mostrarContrasena() ? 'text' : 'password'" formControlName="contrasena"
+                            autocomplete="current-password">
+                        <button mat-icon-button matSuffix type="button" (click)="toggleContrasena()">
+                            <mat-icon>
+                                {{ mostrarContrasena() ? 'visibility_off' : 'visibility' }}
+                            </mat-icon>
+                        </button>
+                        @if (contrasena.hasError('required') && contrasena.touched) {
                         <mat-error>La contraseña es obligatoria</mat-error>
-                    }
-                    @if (contrasena.hasError('minlength') && contrasena.touched) {
+                        }
+                        @if (contrasena.hasError('minlength') && contrasena.touched) {
                         <mat-error>Mínimo 8 caracteres</mat-error>
-                    }
-                </mat-form-field>
-
-                <!-- Botón -->
-                <button
-                    mat-raised-button
-                    color="primary"
-                    type="submit"
-                    class="w-100 login-btn"
-                    [disabled]="cargando()">
-                    @if (!cargando()) {
+                        }
+                    </mat-form-field>
+                    <!-- Botón -->
+                    <button mat-raised-button color="primary" type="submit" class="w-100 login-btn" [disabled]="cargando()">
+                        @if (!cargando()) {
                         <mat-icon>login</mat-icon>
-                    }
-                    @if (cargando()) {
+                        }
+                        @if (cargando()) {
                         <mat-spinner diameter="20" />
-                    } @else {
+                        } @else {
                         Iniciar Sesión
-                    }
-                </button>
+                        }
+                    </button>
+                </form>
+            </mat-card-content>
+        </mat-card>
+    </div>
 
-            </form>
-        </mat-card-content>
+    <!-- Lado derecho: panel de marca / ilustración -->
+    <div class="brand-side">
+        <div class="brand-content">
+            <div class="brand-badge">
+                <div class="badge-orbit"></div>
+                <mat-icon class="brand-icon">health_and_safety</mat-icon>
+            </div>
 
-    </mat-card>
+            <h2>Tu salud, nuestra prioridad</h2>
+            <p>Gestiona tus citas, historial y consultas médicas desde un solo lugar.</p>
+
+            <ul class="brand-features">
+                <li>
+                    <mat-icon>event_available</mat-icon>
+                    <span>Citas en línea</span>
+                </li>
+                <li>
+                    <mat-icon>medical_services</mat-icon>
+                    <span>Especialistas certificados</span>
+                </li>
+                <li>
+                    <mat-icon>groups</mat-icon>
+                    <span>Atención personalizada</span>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 
 @if (cargando()) {
